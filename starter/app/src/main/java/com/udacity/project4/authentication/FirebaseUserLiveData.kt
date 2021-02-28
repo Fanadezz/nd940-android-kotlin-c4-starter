@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
-class FirebaseUserLiveData: LiveData<FirebaseUser>() {
+class FirebaseUserLiveData: LiveData<FirebaseUser?>() {
 
     //Auth Instance
     private val auth = FirebaseAuth.getInstance()
