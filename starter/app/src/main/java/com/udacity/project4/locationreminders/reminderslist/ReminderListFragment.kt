@@ -79,7 +79,7 @@ class ReminderListFragment : BaseFragment() {
 FirebaseAuth.getInstance().signOut()
 
                 //navigate to login screen
-                findNavController().navigate(R.id.loginScreen)
+                findNavController().navigate(R.id.authenticationActivity)
 
             }
         }

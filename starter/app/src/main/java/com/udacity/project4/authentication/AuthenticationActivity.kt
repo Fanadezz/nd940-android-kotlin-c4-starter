@@ -10,6 +10,7 @@ import androidx.navigation.findNavController
 import com.firebase.ui.auth.IdpResponse
 import com.udacity.project4.R
 import com.udacity.project4.locationreminders.RemindersActivity
+import kotlinx.android.synthetic.main.activity_authentication.*
 import timber.log.Timber
 
 /**
@@ -29,32 +30,43 @@ class AuthenticationActivity : AppCompatActivity() {
     }
 
     //register Activity Result API
-    private val authResultLauncher = registerForActivityResult(AuthResultContract()){
+    private val authResultLauncher = registerForActivityResult(AuthResultContract()) {
 
-        handleResponse(it)
+        //handleResponse(it)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_authentication)
+        Timber.i("onCreate() Called")
+        startActivity(Intent(this, RemindersActivity::class.java))
 //         TODO: Implement the create account and sign in using FirebaseUI, use sign in using email and sign in using Google
-        viewModel.authStateLiveData.observe(this){
+     /*   viewModel.authStateLiveData.observe(this) {
 
-            when(it){
+            when (it) {
                 //navigate to RemindersActivity when Authenticated
                 LoginViewModel.AuthStateEnum.AUTHENTICATED -> {
 
+                    buttonLogin.setOnClickListener {
+                        startActivity(Intent(this, RemindersActivity::class.java))
+                        Timber.i("user Authenticated, attempting to navigate to reminders")
+                    }
 
-                    startActivity(Intent(this, RemindersActivity::class.java))
 
                 }
                 //prompt login if unauthenticated
-                else->{
+                else -> {
 
-                    authResultLauncher.launch(SIGN_IN_RESULT_CODE)
+                    buttonLogin.setOnClickListener {
+
+                        Timber.i("else block called")
+                        authResultLauncher.launch(SIGN_IN_RESULT_CODE)
+                    }
+
+
                 }
             }
-        }
+        }*/
 
 //          TODO: If the user was authenticated, send him to RemindersActivity
 
@@ -64,12 +76,12 @@ class AuthenticationActivity : AppCompatActivity() {
     }
 
 
-    private fun handleResponse(idpResponse: IdpResponse?){
+    private fun handleResponse(idpResponse: IdpResponse?) {
 
-        if ( idpResponse == null ||idpResponse.error != null){
+        if (idpResponse == null || idpResponse.error != null) {
 
-           Toast.makeText(this, "Error: $idpResponse.error", Toast.LENGTH_LONG).show()
-        }else
+            Toast.makeText(this, "Error: $idpResponse.error", Toast.LENGTH_LONG).show()
+        } else
 
             Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_LONG).show()
     }
