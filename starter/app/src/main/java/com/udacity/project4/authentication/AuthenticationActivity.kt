@@ -18,59 +18,6 @@ import timber.log.Timber
  * signed in users to the RemindersActivity.
  */
 class AuthenticationActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_authentication)
-
-        //this line is failing to take me to RemindersActivity
-        //startActivity(Intent(this, RemindersActivity::class.java))
-Timber.i("1st Act. onCreate() called")
-
-//         TODO: Implement the create account and sign in using FirebaseUI, use sign in using email and sign in using Google
-     /*   viewModel.authStateLiveData.observe(this) {
-
-            when (it) {
-                //navigate to RemindersActivity when Authenticated
-                LoginViewModel.AuthStateEnum.AUTHENTICATED -> {
-
-                    buttonLogin.setOnClickListener {
-                        startActivity(Intent(this, RemindersActivity::class.java))
-                        Timber.i("user Authenticated, attempting to navigate to reminders")
-                    }
-
-
-                }
-                //prompt login if unauthenticated
-                else -> {
-
-                    buttonLogin.setOnClickListener {
-
-                        Timber.i("else block called")
-                        authResultLauncher.launch(SIGN_IN_RESULT_CODE)
-                    }
-
-
-                }
-            }
-        }*/
-
-//          TODO: If the user was authenticated, send him to RemindersActivity
-
-//          TODO: a bonus is to customize the sign in flow to look nice using :
-        //https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md#custom-layout
-
-    }
-
-
-    private fun handleResponse(idpResponse: IdpResponse?) {
-
-        if (idpResponse == null || idpResponse.error != null) {
-
-            Toast.makeText(this, "Error: $idpResponse.error", Toast.LENGTH_LONG).show()
-        } else
-
-            Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_LONG).show()
-    }
 
     //get lazy delegate viewModel
     private val viewModel by viewModels<LoginViewModel>()
@@ -84,7 +31,61 @@ Timber.i("1st Act. onCreate() called")
     //register Activity Result API
     private val authResultLauncher = registerForActivityResult(AuthResultContract()) {
 
-        //handleResponse(it)
+        handleResponse(it)
     }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_authentication)
+        Timber.i("onCreate called")
+        //LOGIN_IMPLEMENTATION
+
+        //observe authentication status
+        viewModel.authStateLiveData.observe(this) { status ->
+            when (status) {
+
+                LoginViewModel.AuthStateEnum.AUTHENTICATED -> {
+                    //redirect to RemindersActivity if signed-in using an intent
+                    startActivity(Intent(this, RemindersActivity::class.java))
+
+                }
+                else -> {
+
+                    //prompt the user to sign in
+                    buttonLogin.setOnClickListener {
+
+                        authResultLauncher.launch(SIGN_IN_RESULT_CODE)
+                    }
+
+                }
+            }
+        }
+
+
+//         TODO: Implement the create account and sign in using FirebaseUI, use sign in using email and sign in using Google
+
+
+//          TODO: If the user was authenticated, send him to RemindersActivity
+
+//          TODO: a bonus is to customize the sign in flow to look nice using :
+        //https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md#custom-layout
+
+    }
+
+
+    private fun handleResponse(idpResponse: IdpResponse) {
+
+        if (idpResponse.error != null) {
+
+            //log error if any
+            Timber.i("Error: $idpResponse.error")
+
+        } else
+
+        //take the user to RemindersActivity
+            startActivity(Intent(this, RemindersActivity::class.java))
+
+    }
+
 
 }

@@ -1,5 +1,6 @@
 package com.udacity.project4.locationreminders.reminderslist
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
@@ -7,6 +8,7 @@ import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.udacity.project4.R
+import com.udacity.project4.authentication.AuthenticationActivity
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentRemindersBinding
@@ -14,6 +16,7 @@ import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import com.udacity.project4.utils.setTitle
 import com.udacity.project4.utils.setup
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 class ReminderListFragment : BaseFragment() {
     //use Koin to retrieve the ViewModel instance
@@ -35,6 +38,10 @@ class ReminderListFragment : BaseFragment() {
         setTitle(getString(R.string.app_name))
 
         binding.refreshLayout.setOnRefreshListener { _viewModel.loadReminders() }
+
+        val auth = FirebaseAuth.getInstance()
+        val user = auth.currentUser?.displayName
+        Timber.i("The current user is $user")
 
         return binding.root
     }
@@ -79,7 +86,9 @@ class ReminderListFragment : BaseFragment() {
 FirebaseAuth.getInstance().signOut()
 
                 //navigate to login screen
-                //findNavController().navigate(R.id.authenticationActivity)
+             val intent = Intent(activity, AuthenticationActivity::class.java)
+
+                startActivity(intent)
 
             }
         }
