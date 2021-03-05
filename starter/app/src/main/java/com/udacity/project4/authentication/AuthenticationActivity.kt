@@ -18,28 +18,14 @@ import timber.log.Timber
  * signed in users to the RemindersActivity.
  */
 class AuthenticationActivity : AppCompatActivity() {
-
-
-    //get lazy delegate viewModel
-    private val viewModel by viewModels<LoginViewModel>()
-
-    //companion object with the integer input
-    companion object {
-
-        const val SIGN_IN_RESULT_CODE = 1001
-    }
-
-    //register Activity Result API
-    private val authResultLauncher = registerForActivityResult(AuthResultContract()) {
-
-        //handleResponse(it)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_authentication)
-        Timber.i("onCreate() Called")
-        startActivity(Intent(this, RemindersActivity::class.java))
+
+        //this line is failing to take me to RemindersActivity
+        //startActivity(Intent(this, RemindersActivity::class.java))
+Timber.i("1st Act. onCreate() called")
+
 //         TODO: Implement the create account and sign in using FirebaseUI, use sign in using email and sign in using Google
      /*   viewModel.authStateLiveData.observe(this) {
 
@@ -85,4 +71,20 @@ class AuthenticationActivity : AppCompatActivity() {
 
             Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_LONG).show()
     }
+
+    //get lazy delegate viewModel
+    private val viewModel by viewModels<LoginViewModel>()
+
+    //companion object with the integer input
+    companion object {
+
+        const val SIGN_IN_RESULT_CODE = 1001
+    }
+
+    //register Activity Result API
+    private val authResultLauncher = registerForActivityResult(AuthResultContract()) {
+
+        //handleResponse(it)
+    }
+
 }

@@ -26,7 +26,7 @@ class LoginScreen : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.authStateLiveData.observe(viewLifecycleOwner) {
+       /* viewModel.authStateLiveData.observe(viewLifecycleOwner) {
 
             when (it) {
 
@@ -51,7 +51,7 @@ class LoginScreen : Fragment() {
 
             }
 
-        }
+        }*/
 
     }
 

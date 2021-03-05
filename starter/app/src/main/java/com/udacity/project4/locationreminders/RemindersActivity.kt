@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
 import com.udacity.project4.R
 import kotlinx.android.synthetic.main.activity_reminders.*
+import timber.log.Timber
 
 /**
  * The RemindersActivity that holds the reminders fragments
@@ -19,7 +20,7 @@ class RemindersActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reminders)
-
+        Timber.i("2nd Act. onCreate() called")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
