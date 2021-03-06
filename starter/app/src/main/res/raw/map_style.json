@@ -9,11 +9,38 @@
     ]
   },
   {
+    "featureType": "poi.park",
+    "elementType": "geometry.fill",
+    "stylers": [
+      {
+        "color": "#53df5c"
+      }
+    ]
+  },
+  {
+    "featureType": "road.arterial",
+    "elementType": "geometry.fill",
+    "stylers": [
+      {
+        "color": "#ffdd00"
+      }
+    ]
+  },
+  {
     "featureType": "road.highway",
     "elementType": "geometry.fill",
     "stylers": [
       {
         "color": "#ffdd00"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway.controlled_access",
+    "elementType": "geometry.fill",
+    "stylers": [
+      {
+        "color": "#ff0000"
       }
     ]
   },
@@ -26,6 +53,15 @@
       },
       {
         "visibility": "on"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.station.rail",
+    "elementType": "geometry.fill",
+    "stylers": [
+      {
+        "color": "#000000"
       }
     ]
   }

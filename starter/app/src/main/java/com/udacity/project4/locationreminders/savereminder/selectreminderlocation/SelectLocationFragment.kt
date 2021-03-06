@@ -62,6 +62,7 @@ class SelectLocationFragment : BaseFragment() {
 //        TODO: put a marker to location that the user selected
 
 
+
 //        TODO: call this function after the user confirms on the selected location
         onLocationSelected()
 
@@ -79,6 +80,8 @@ class SelectLocationFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(onMapReadyCallback)
+
+
 
     }
 
@@ -101,6 +104,18 @@ class SelectLocationFragment : BaseFragment() {
 
         //add map customization
         styleBaseMap(map)
+
+        map.setOnPoiClickListener {
+
+
+            map.clear()
+
+            val poiMarker = map.addMarker(MarkerOptions().position(it.latLng).title(it.name).icon
+            (BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)))
+
+            poiMarker.showInfoWindow()
+        }
+
     }
 
     @SuppressLint("MissingPermission")
@@ -151,7 +166,7 @@ class SelectLocationFragment : BaseFragment() {
 
     //Change the map type based on the user's selection
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        // TODO: Change the map type based on the user's selection.
+
         R.id.normal_map -> {
 
             map.mapType = GoogleMap.MAP_TYPE_NORMAL
