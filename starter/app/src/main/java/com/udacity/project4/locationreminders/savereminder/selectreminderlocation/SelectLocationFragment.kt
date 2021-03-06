@@ -37,19 +37,39 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var lastKnownLocation: LatLng
     private val permissionCheckLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) {
 
                 granted ->
 
-            if (granted) {
+                if (granted) {
 
-                getLastKnownLocation()
-            } else {
+                    getLastKnownLocation()
+                } else {
 
+
+                }
 
             }
 
-        }
+
+    // Map Implementation
+    override fun onMapReady(map: GoogleMap) {
+        //permission check
+        permissionCheckLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+
+        //add marker
+
+        map.addMarker(MarkerOptions()
+                              .position(lastKnownLocation)
+                              .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)))
+
+        //move camera
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(lastKnownLocation, 20f))
+
+        //set map type
+        map.mapType = GoogleMap.MAP_TYPE_NORMAL
+
+    }
 
 
     //get last known location
@@ -59,18 +79,10 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         fusedLocationProviderClient.lastLocation.addOnSuccessListener {
 
             if (it != null) {
-                
-               lastKnownLocation = LatLng(it.latitude, it.longitude)
+
+                lastKnownLocation = LatLng(it.latitude, it.longitude)
             }
-
-
-            }
-    }
-
-    override fun onMapReady(map: GoogleMap) {
-
-        permissionCheckLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
-
+        }
     }
 
 
@@ -79,15 +91,18 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private lateinit var binding: FragmentSelectLocationBinding
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_select_location, container, false)
+                DataBindingUtil.inflate(inflater,
+                                        R.layout.fragment_select_location,
+                                        container,
+                                        false)
 
 
         //initialize fusedLocationProviderClient
         fusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(requireActivity())
+                LocationServices.getFusedLocationProviderClient(requireActivity())
 
         binding.viewModel = _viewModel
         binding.lifecycleOwner = this
@@ -107,6 +122,14 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val mapFragment = childFragmentManager.findFragmentById(com.google.android.gms.location.R.id.map) as SupportMapFragment?
+        mapFragment?.getMapAsync(onMapReadyCallback)
+
+    }
+
+
     private fun onLocationSelected() {
         //        TODO: When the user confirms on the selected location,
         //         send back the selected location details to the view model
@@ -121,6 +144,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         // TODO: Change the map type based on the user's selection.
         R.id.normal_map -> {
+            map.mapType
             true
         }
         R.id.hybrid_map -> {
