@@ -30,6 +30,7 @@ class SelectLocationFragment : BaseFragment() {
     private lateinit var map: GoogleMap
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var lastKnownLocation: Location
+    private lateinit var selectedPOI:PointOfInterest
 
 
     //Use Koin to get the view model of the SaveReminder
@@ -114,6 +115,9 @@ class SelectLocationFragment : BaseFragment() {
             (BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)))
 
             poiMarker.showInfoWindow()
+
+            //set details for point of interest
+            selectedPOI = PointOfInterest(it.latLng, it.placeId, it.name)
         }
 
     }
