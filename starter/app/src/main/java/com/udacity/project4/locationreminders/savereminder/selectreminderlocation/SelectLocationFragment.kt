@@ -107,7 +107,7 @@ class SelectLocationFragment : BaseFragment() {
 
         map.setOnPoiClickListener {
 
-
+//clear markers
             map.clear()
 
             val poiMarker = map.addMarker(MarkerOptions().position(it.latLng).title(it.name).icon
