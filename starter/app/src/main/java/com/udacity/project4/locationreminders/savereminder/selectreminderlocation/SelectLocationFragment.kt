@@ -22,7 +22,7 @@ import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import org.koin.android.ext.android.inject
 
-class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
+class SelectLocationFragment : BaseFragment(){
 
     //vars
     private lateinit var map: GoogleMap
@@ -30,7 +30,21 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private lateinit var lastKnownLocation: LatLng
 
 
-    private val onMapReadyCallback = OnMapReadyCallback {  }
+    private val onMapReadyCallback = OnMapReadyCallback {
+
+        //initialize map
+
+        map = it
+
+        //add marker
+        map.addMarker(
+                MarkerOptions()
+                        .position(lastKnownLocation)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)))
+
+        //move camera
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(lastKnownLocation, 18F))
+    }
 
     private val permissionCheckLauncher =
             registerForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -48,24 +62,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             }
 
 
-    // Map Implementation
-    override fun onMapReady(map: GoogleMap) {
-        //permission check
-        permissionCheckLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-
-        //add marker
-
-        map.addMarker(MarkerOptions()
-                              .position(lastKnownLocation)
-                              .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)))
-
-        //move camera
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(lastKnownLocation, 20f))
-
-        //set map type
-        map.mapType = GoogleMap.MAP_TYPE_NORMAL
-
-    }
+    
 
 
     //get last known location
@@ -90,10 +87,12 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding =
-                DataBindingUtil.inflate(inflater,
-                                        R.layout.fragment_select_location,
-                                        container,
-                                        false)
+                DataBindingUtil.inflate(
+                        inflater,
+                        R.layout.fragment_select_location,
+                        container,
+                        false
+                )
 
 
         //initialize fusedLocationProviderClient
@@ -120,9 +119,9 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment?.getMapAsync(onMapReadyCallback)
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+
+        mapFragment.getMapAsync(onMapReadyCallback)
 
     }
 
