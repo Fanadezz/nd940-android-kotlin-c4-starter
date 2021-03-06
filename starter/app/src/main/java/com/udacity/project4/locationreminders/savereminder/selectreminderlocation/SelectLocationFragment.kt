@@ -34,8 +34,14 @@ import org.koin.android.ext.android.inject
 
 class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
+    //vars
+    private lateinit var map: GoogleMap
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var lastKnownLocation: LatLng
+
+
+    private val onMapReadyCallback = OnMapReadyCallback {  }
+
     private val permissionCheckLauncher =
             registerForActivityResult(ActivityResultContracts.RequestPermission()) {
 
@@ -144,7 +150,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         // TODO: Change the map type based on the user's selection.
         R.id.normal_map -> {
-            map.mapType
+
             true
         }
         R.id.hybrid_map -> {
