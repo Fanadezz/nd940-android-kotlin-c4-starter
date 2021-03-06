@@ -3,12 +3,12 @@ package com.udacity.project4.locationreminders.savereminder.selectreminderlocati
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.location.Location
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.Transformations.map
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -22,61 +22,12 @@ import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import org.koin.android.ext.android.inject
 
-class SelectLocationFragment : BaseFragment(){
+class SelectLocationFragment : BaseFragment() {
 
     //vars
     private lateinit var map: GoogleMap
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    private lateinit var lastKnownLocation: LatLng
-
-
-    private val onMapReadyCallback = OnMapReadyCallback {
-
-        //initialize map
-
-        map = it
-
-        //add marker
-        map.addMarker(
-                MarkerOptions()
-                        .position(lastKnownLocation)
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)))
-
-        //move camera
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(lastKnownLocation, 18F))
-    }
-
-    private val permissionCheckLauncher =
-            registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-
-                granted ->
-
-                if (granted) {
-
-                    getLastKnownLocation()
-                } else {
-
-
-                }
-
-            }
-
-
-
-
-
-    //get last known location
-    @SuppressLint("MissingPermission")
-    private fun getLastKnownLocation() {
-
-        fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-
-            if (it != null) {
-
-                lastKnownLocation = LatLng(it.latitude, it.longitude)
-            }
-        }
-    }
+    private lateinit var lastKnownLocation: Location
 
 
     //Use Koin to get the view model of the SaveReminder
@@ -86,13 +37,11 @@ class SelectLocationFragment : BaseFragment(){
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding =
-                DataBindingUtil.inflate(
-                        inflater,
-                        R.layout.fragment_select_location,
-                        container,
-                        false
-                )
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_select_location, container,
+                                          false)
+
+        //request for permission using Activity Result API
+        permissionCheckLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
 
 
         //initialize fusedLocationProviderClient
@@ -117,14 +66,71 @@ class SelectLocationFragment : BaseFragment(){
         return binding.root
     }
 
+    private val onMapReadyCallback = OnMapReadyCallback {
+        //initialize map
+        map = it
+
+
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-
         mapFragment.getMapAsync(onMapReadyCallback)
 
     }
 
+
+    @SuppressLint("MissingPermission")
+    private fun moveCameraAndAddMarker(location: Location) {
+
+        val latLng = LatLng(location.latitude, location.longitude)
+
+        //add marker
+        map.addMarker(
+                MarkerOptions()
+                        .position(latLng)
+                        .icon(BitmapDescriptorFactory.defaultMarker(
+                                BitmapDescriptorFactory.HUE_GREEN)))
+        //move camera
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18F))
+        //add my Location Button on top-right side corner
+        map.isMyLocationEnabled = true
+    }
+
+    @SuppressLint("MissingPermission")
+    private val permissionCheckLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+
+                isGranted ->
+
+                if (isGranted) {
+
+
+                    getLastKnownLocation()
+
+                } else {
+
+
+                }
+
+            }
+
+    @SuppressLint("MissingPermission")
+    fun getLastKnownLocation() {
+
+        fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+            if (location != null) {
+                lastKnownLocation = location
+                moveCameraAndAddMarker(lastKnownLocation)
+            }
+        }
+                .addOnFailureListener {
+
+                    Toast.makeText(requireActivity(), "${it.message}", Toast.LENGTH_LONG)
+                            .show()
+                }
+    }
 
     private fun onLocationSelected() {
         //        TODO: When the user confirms on the selected location,
@@ -137,6 +143,8 @@ class SelectLocationFragment : BaseFragment(){
         inflater.inflate(R.menu.map_options, menu)
     }
 
+
+    //Change the map type based on the user's selection
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         // TODO: Change the map type based on the user's selection.
         R.id.normal_map -> {
