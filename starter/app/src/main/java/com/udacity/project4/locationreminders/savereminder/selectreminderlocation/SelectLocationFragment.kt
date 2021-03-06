@@ -3,6 +3,7 @@ package com.udacity.project4.locationreminders.savereminder.selectreminderlocati
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.res.Resources
 import android.location.Location
 import android.os.Bundle
 import android.view.*
@@ -21,6 +22,7 @@ import com.udacity.project4.databinding.FragmentSelectLocationBinding
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import org.koin.android.ext.android.inject
+import timber.log.Timber
 
 class SelectLocationFragment : BaseFragment() {
 
@@ -96,6 +98,9 @@ class SelectLocationFragment : BaseFragment() {
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18F))
         //add my Location Button on top-right side corner
         map.isMyLocationEnabled = true
+
+        //add map customization
+        styleBaseMap(map)
     }
 
     @SuppressLint("MissingPermission")
@@ -168,6 +173,24 @@ class SelectLocationFragment : BaseFragment() {
             true
         }
         else -> super.onOptionsItemSelected(item)
+    }
+
+
+    private fun styleBaseMap(map: GoogleMap) {
+try {
+    //customize base map style
+
+    val success = map.setMapStyle(
+            MapStyleOptions.loadRawResourceStyle(activity, R.raw.map_style))
+    if (!success) {
+
+        Timber.i("Custom Style Parsing Failes")
+    }
+}catch (e: Resources.NotFoundException){
+
+    Timber.i("Error: $e")
+}
+
     }
 
 
