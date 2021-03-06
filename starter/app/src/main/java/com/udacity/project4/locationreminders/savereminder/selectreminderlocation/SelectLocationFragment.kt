@@ -2,14 +2,17 @@ package com.udacity.project4.locationreminders.savereminder.selectreminderlocati
 
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.content.res.Resources
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.common.api.ApiException
@@ -30,10 +33,45 @@ import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import org.koin.android.ext.android.inject
 
 class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
-    override fun onMapReady(p0: GoogleMap?) {
-        TODO("Not yet implemented")
+
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var lastKnownLocation: LatLng
+    private val permissionCheckLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+
+                granted ->
+
+            if (granted) {
+
+                getLastKnownLocation()
+            } else {
+
+
+            }
+
+        }
+
+
+    //get last known location
+    @SuppressLint("MissingPermission")
+    private fun getLastKnownLocation() {
+
+        fusedLocationProviderClient.lastLocation.addOnSuccessListener {
+
+            if (it != null) {
+                
+               lastKnownLocation = LatLng(it.latitude, it.longitude)
+            }
+
+
+            }
     }
 
+    override fun onMapReady(map: GoogleMap) {
+
+        permissionCheckLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
+
+    }
 
 
     //Use Koin to get the view model of the SaveReminder
@@ -45,6 +83,11 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     ): View {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_select_location, container, false)
+
+
+        //initialize fusedLocationProviderClient
+        fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(requireActivity())
 
         binding.viewModel = _viewModel
         binding.lifecycleOwner = this
@@ -91,8 +134,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         }
         else -> super.onOptionsItemSelected(item)
     }
-
-
 
 
 }
