@@ -34,7 +34,7 @@ class SelectLocationFragment : BaseFragment() {
     private lateinit var map: GoogleMap
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var lastKnownLocation: Location
-    private lateinit var selectedPOI:PointOfInterest
+    private lateinit var selectedPOI: PointOfInterest
 
 
     //Use Koin to get the view model of the SaveReminder
@@ -66,10 +66,10 @@ class SelectLocationFragment : BaseFragment() {
 //        TODO: add style to the map
 //        TODO: put a marker to location that the user selected
 
-binding.buttonSave.setOnClickListener {
+        binding.buttonSave.setOnClickListener {
 
-    onLocationSelected()
-}
+            onLocationSelected()
+        }
 //        TODO: call this function after the user confirms on the selected location
 
 
@@ -87,7 +87,6 @@ binding.buttonSave.setOnClickListener {
         super.onViewCreated(view, savedInstanceState)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(onMapReadyCallback)
-
 
 
     }
@@ -117,8 +116,11 @@ binding.buttonSave.setOnClickListener {
 //clear markers
             map.clear()
 
-            val poiMarker = map.addMarker(MarkerOptions().position(it.latLng).title(it.name).icon
-            (BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)))
+            val poiMarker = map.addMarker(MarkerOptions().position(it.latLng)
+                                                  .title(it.name)
+                                                  .icon
+                                                  (BitmapDescriptorFactory.defaultMarker(
+                                                          BitmapDescriptorFactory.HUE_BLUE)))
 
             poiMarker.showInfoWindow()
 
@@ -166,18 +168,15 @@ binding.buttonSave.setOnClickListener {
         //        TODO: When the user confirms on the selected location,
         //         send back the selected location details to the view model
         //         and navigate back to the previous fragment to save the reminder and add the geofence
-
-
-
-        if (::selectedPOI.isInitialized){
+        if (::selectedPOI.isInitialized) {
             findNavController().navigate(SelectLocationFragmentDirections
                                                  .actionSelectLocationFragmentToSaveReminderFragment
                                                  (selectedPOI))
 
-        }
-        else{
-
-            Snackbar.make(binding.root, getString(R.string.pick_point_of_interest_msg), Snackbar.LENGTH_SHORT).show()
+        } else {
+            Snackbar.make(binding.root, getString(R.string.pick_point_of_interest_msg),
+                          Snackbar.LENGTH_SHORT)
+                    .show()
         }
 
     }
@@ -216,19 +215,19 @@ binding.buttonSave.setOnClickListener {
 
 
     private fun styleBaseMap(map: GoogleMap) {
-try {
-    //customize base map style
+        try {
+            //customize base map style
 
-    val success = map.setMapStyle(
-            MapStyleOptions.loadRawResourceStyle(activity, R.raw.map_style))
-    if (!success) {
+            val success = map.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(activity, R.raw.map_style))
+            if (!success) {
 
-        Timber.i("Custom Style Parsing Failes")
-    }
-}catch (e: Resources.NotFoundException){
+                Timber.i("Custom Style Parsing Failes")
+            }
+        } catch (e: Resources.NotFoundException) {
 
-    Timber.i("Error: $e")
-}
+            Timber.i("Error: $e")
+        }
 
     }
 

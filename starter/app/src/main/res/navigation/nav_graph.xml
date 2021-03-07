@@ -27,9 +27,6 @@
         <action
             android:id="@+id/action_saveReminderFragment_to_selectLocationFragment"
             app:destination="@id/selectLocationFragment" />
-        <argument
-            android:name="poi"
-            app:argType="com.google.android.gms.maps.model.PointOfInterest" />
     </fragment>
     <fragment
         android:id="@+id/selectLocationFragment"
