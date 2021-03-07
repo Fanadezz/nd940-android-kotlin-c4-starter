@@ -8,19 +8,23 @@ import android.location.Location
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
+import android.widget.Toast.makeText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.android.material.snackbar.Snackbar
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
+import kotlinx.android.synthetic.main.fragment_select_location.*
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
@@ -62,10 +66,12 @@ class SelectLocationFragment : BaseFragment() {
 //        TODO: add style to the map
 //        TODO: put a marker to location that the user selected
 
+binding.buttonSave.setOnClickListener {
 
-
+    onLocationSelected()
+}
 //        TODO: call this function after the user confirms on the selected location
-        onLocationSelected()
+
 
         return binding.root
     }
@@ -151,7 +157,7 @@ class SelectLocationFragment : BaseFragment() {
         }
                 .addOnFailureListener {
 
-                    Toast.makeText(requireActivity(), "${it.message}", Toast.LENGTH_LONG)
+                    makeText(requireActivity(), "${it.message}", Toast.LENGTH_LONG)
                             .show()
                 }
     }
@@ -160,6 +166,20 @@ class SelectLocationFragment : BaseFragment() {
         //        TODO: When the user confirms on the selected location,
         //         send back the selected location details to the view model
         //         and navigate back to the previous fragment to save the reminder and add the geofence
+
+
+
+        if (::selectedPOI.isInitialized){
+            findNavController().navigate(SelectLocationFragmentDirections
+                                                 .actionSelectLocationFragmentToSaveReminderFragment
+                                                 (selectedPOI))
+
+        }
+        else{
+
+            Snackbar.make(binding.root, getString(R.string.pick_point_of_interest_msg), Snackbar.LENGTH_SHORT).show()
+        }
+
     }
 
 
