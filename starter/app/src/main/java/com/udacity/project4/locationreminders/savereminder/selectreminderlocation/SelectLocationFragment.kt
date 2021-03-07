@@ -35,6 +35,8 @@ class SelectLocationFragment : BaseFragment() {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var lastKnownLocation: Location
     private lateinit var selectedPOI: PointOfInterest
+    private lateinit var poiLatLng: LatLng
+    private lateinit var poiName: String
 
 
     //Use Koin to get the view model of the SaveReminder
@@ -113,9 +115,10 @@ class SelectLocationFragment : BaseFragment() {
 
         map.setOnPoiClickListener {
 
-//clear markers
+            //clear markers
             map.clear()
 
+            //add poiMarker
             val poiMarker = map.addMarker(MarkerOptions().position(it.latLng)
                                                   .title(it.name)
                                                   .icon
@@ -126,6 +129,12 @@ class SelectLocationFragment : BaseFragment() {
 
             //set details for point of interest
             selectedPOI = PointOfInterest(it.latLng, it.placeId, it.name)
+
+            //set poiLatLng
+            poiLatLng = it.latLng
+
+            //set poi name
+            poiName = it.name
         }
 
     }
@@ -174,6 +183,12 @@ class SelectLocationFragment : BaseFragment() {
 
             //set the poi value in the shared viewModel
             _viewModel.selectedPOI.value = selectedPOI
+
+            //set latitude, longitude and location string
+            _viewModel.latitude.value = poiLatLng.latitude
+            _viewModel.longitude.value = poiLatLng.longitude
+            _viewModel.reminderSelectedLocationStr.value = poiName
+
 
         } else {
             Snackbar.make(binding.root, getString(R.string.pick_point_of_interest_msg),
