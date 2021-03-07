@@ -170,8 +170,10 @@ class SelectLocationFragment : BaseFragment() {
         //         and navigate back to the previous fragment to save the reminder and add the geofence
         if (::selectedPOI.isInitialized) {
             findNavController().navigate(SelectLocationFragmentDirections
-                                                 .actionSelectLocationFragmentToSaveReminderFragment
-                                                 (selectedPOI))
+                                                 .actionSelectLocationFragmentToSaveReminderFragment())
+
+            //set the poi value in the shared viewModel
+            _viewModel.selectedPOI.value = selectedPOI
 
         } else {
             Snackbar.make(binding.root, getString(R.string.pick_point_of_interest_msg),
