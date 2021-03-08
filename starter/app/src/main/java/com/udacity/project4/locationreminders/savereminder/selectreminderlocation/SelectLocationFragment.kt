@@ -3,6 +3,9 @@ package com.udacity.project4.locationreminders.savereminder.selectreminderlocati
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.PendingIntent
+import android.content.BroadcastReceiver
+import android.content.Intent
 import android.content.res.Resources
 import android.location.Location
 import android.os.Bundle
@@ -22,6 +25,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
+import com.udacity.project4.locationreminders.geofence.GeofenceBroadcastReceiver
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import kotlinx.android.synthetic.main.fragment_select_location.*
@@ -37,6 +41,11 @@ class SelectLocationFragment : BaseFragment() {
     private lateinit var selectedPOI: PointOfInterest
     private lateinit var poiLatLng: LatLng
     private lateinit var poiName: String
+    private var poiIsInitialized = false
+
+
+
+
 
 
     //Use Koin to get the view model of the SaveReminder
@@ -56,6 +65,8 @@ class SelectLocationFragment : BaseFragment() {
         //initialize fusedLocationProviderClient
         fusedLocationProviderClient =
                 LocationServices.getFusedLocationProviderClient(requireActivity())
+
+
 
         binding.viewModel = _viewModel
         binding.lifecycleOwner = this
@@ -96,15 +107,22 @@ class SelectLocationFragment : BaseFragment() {
 
     @SuppressLint("MissingPermission")
     private fun moveCameraAndAddMarker(location: Location) {
+        //clear any marker first
+        map.clear()
+
+        poiIsInitialized = false
 
         val latLng = LatLng(location.latitude, location.longitude)
 
         //add marker
-        map.addMarker(
-                MarkerOptions()
-                        .position(latLng)
-                        .icon(BitmapDescriptorFactory.defaultMarker(
-                                BitmapDescriptorFactory.HUE_GREEN)))
+        val myMarker = map.addMarker(MarkerOptions()
+                                             .position(latLng)
+                                             .title("My Location")
+                                             .icon(BitmapDescriptorFactory.defaultMarker(
+                                                     BitmapDescriptorFactory.HUE_GREEN)))
+
+        myMarker.showInfoWindow()
+
         //move camera
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18F))
         //add my Location Button on top-right side corner
@@ -129,6 +147,9 @@ class SelectLocationFragment : BaseFragment() {
 
             //set details for point of interest
             selectedPOI = PointOfInterest(it.latLng, it.placeId, it.name)
+
+            //toggle the poi initialization tracker
+            poiIsInitialized = true
 
             //set poiLatLng
             poiLatLng = it.latLng
@@ -177,7 +198,7 @@ class SelectLocationFragment : BaseFragment() {
         //        TODO: When the user confirms on the selected location,
         //         send back the selected location details to the view model
         //         and navigate back to the previous fragment to save the reminder and add the geofence
-        if (::selectedPOI.isInitialized) {
+        if (poiIsInitialized) {
             findNavController().navigate(SelectLocationFragmentDirections
                                                  .actionSelectLocationFragmentToSaveReminderFragment())
 
