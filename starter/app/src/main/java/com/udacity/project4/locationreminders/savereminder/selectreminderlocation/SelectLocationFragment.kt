@@ -8,11 +8,13 @@ import android.content.BroadcastReceiver
 import android.content.Intent
 import android.content.res.Resources
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import android.widget.Toast.makeText
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.*
@@ -52,6 +54,7 @@ class SelectLocationFragment : BaseFragment() {
     override val _viewModel: SaveReminderViewModel by inject()
     private lateinit var binding: FragmentSelectLocationBinding
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -59,7 +62,7 @@ class SelectLocationFragment : BaseFragment() {
                                           false)
 
         //request for permission using Activity Result API
-        permissionCheckLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        permissionCheckLauncher.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
 
 
         //initialize fusedLocationProviderClient
@@ -162,18 +165,19 @@ class SelectLocationFragment : BaseFragment() {
 
     @SuppressLint("MissingPermission")
     private val permissionCheckLauncher =
-            registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
 
-                isGranted ->
+               permissions ->
 
-                if (isGranted) {
+                if (permissions[Manifest.permission.ACCESS_FINE_LOCATION]==true /*&&
+                        permissions[Manifest.permission.ACCESS_BACKGROUND_LOCATION]==true*/) {
 
-
+Timber.i("Permissions Granted")
                     getLastKnownLocation()
 
                 } else {
 
-
+                    Timber.i("Permissions Denied")
                 }
 
             }
