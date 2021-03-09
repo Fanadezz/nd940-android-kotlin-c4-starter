@@ -1,12 +1,16 @@
 package com.udacity.project4.locationreminders.savereminder
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingClient
@@ -46,6 +50,7 @@ class SaveReminderFragment : BaseFragment() {
         val EXPIRY_TIME: Long = TimeUnit.HOURS.toMillis(1)
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
@@ -56,6 +61,8 @@ class SaveReminderFragment : BaseFragment() {
         setDisplayHomeAsUpEnabled(true)
 
         binding.viewModel = _viewModel
+
+        backgroundPermLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
 
         //initialize GeofencingClient
         geofencingClient = LocationServices.getGeofencingClient(requireActivity())
@@ -127,5 +134,17 @@ Timber.i("onCreateView() for SaveReminderFragment Called")
         super.onDestroy()
         //make sure to clear the view model after destroy, as it's a single view model.
         _viewModel.onClear()
+    }
+
+
+    private val backgroundPermLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()){
+
+        isGranted ->
+        if (isGranted){
+
+            Timber.i("Background Perm Sanctioned")
+        }
+
+        else  {Timber.i("Background Perms Denied")}
     }
 }

@@ -55,20 +55,20 @@ class SelectLocationFragment : BaseFragment() {
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
+
+
+
+            //request for permission using Activity Result API
+            permissionCheckLauncher.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION/*,
+                                                   Manifest.permission.ACCESS_FINE_LOCATION*/))
+
+
+
+
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_select_location, container,
                                           false)
 
-        if (runningQOrLater) {
 
-            //request for permission using Activity Result API
-            permissionCheckLauncher.launch(arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION,
-                                                   Manifest.permission.ACCESS_FINE_LOCATION))
-        }else{
-
-            //request for permission using Activity Result API
-            permissionCheckLauncher.launch(arrayOf(
-                                                   Manifest.permission.ACCESS_FINE_LOCATION))
-        }
 
 
 
@@ -100,6 +100,7 @@ class SelectLocationFragment : BaseFragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     private val onMapReadyCallback = OnMapReadyCallback {
         //initialize map
         map = it
@@ -107,6 +108,7 @@ class SelectLocationFragment : BaseFragment() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
@@ -178,7 +180,7 @@ class SelectLocationFragment : BaseFragment() {
 
                 permissions ->
 
-                if (permissions[Manifest.permission.ACCESS_BACKGROUND_LOCATION] == true &&
+                if (
                         permissions[Manifest.permission.ACCESS_FINE_LOCATION]== true) {
 
                     getLastKnownLocation()
