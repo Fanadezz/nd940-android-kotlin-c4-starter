@@ -59,7 +59,7 @@ class SaveReminderFragment : BaseFragment() {
 
         //initialize GeofencingClient
         geofencingClient = LocationServices.getGeofencingClient(requireActivity())
-
+Timber.i("onCreateView() for SaveReminderFragment Called")
         return binding.root
     }
 

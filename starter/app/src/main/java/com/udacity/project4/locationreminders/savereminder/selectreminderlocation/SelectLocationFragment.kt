@@ -44,11 +44,8 @@ class SelectLocationFragment : BaseFragment() {
     private lateinit var poiLatLng: LatLng
     private lateinit var poiName: String
     private var poiIsInitialized = false
-
-
-
-
-
+    private val runningQOrLater = Build.VERSION.SDK_INT >= Build
+            .VERSION_CODES.Q
 
     //Use Koin to get the view model of the SaveReminder
     override val _viewModel: SaveReminderViewModel by inject()
@@ -61,8 +58,19 @@ class SelectLocationFragment : BaseFragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_select_location, container,
                                           false)
 
-        //request for permission using Activity Result API
-        permissionCheckLauncher.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
+        if (runningQOrLater) {
+
+            //request for permission using Activity Result API
+            permissionCheckLauncher.launch(arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+                                                   Manifest.permission.ACCESS_FINE_LOCATION))
+        }else{
+
+            //request for permission using Activity Result API
+            permissionCheckLauncher.launch(arrayOf(
+                                                   Manifest.permission.ACCESS_FINE_LOCATION))
+        }
+
+
 
 
         //initialize fusedLocationProviderClient
@@ -163,24 +171,26 @@ class SelectLocationFragment : BaseFragment() {
 
     }
 
+    //suppress permission check
     @SuppressLint("MissingPermission")
     private val permissionCheckLauncher =
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
 
-               permissions ->
+                permissions ->
 
-                if (permissions[Manifest.permission.ACCESS_FINE_LOCATION]==true /*&&
-                        permissions[Manifest.permission.ACCESS_BACKGROUND_LOCATION]==true*/) {
+                if (permissions[Manifest.permission.ACCESS_BACKGROUND_LOCATION] == true &&
+                        permissions[Manifest.permission.ACCESS_FINE_LOCATION]== true) {
 
-Timber.i("Permissions Granted")
                     getLastKnownLocation()
-
+                    Timber.i("Permissions Granted")
                 } else {
 
                     Timber.i("Permissions Denied")
                 }
 
+
             }
+
 
     @SuppressLint("MissingPermission")
     fun getLastKnownLocation() {
