@@ -36,6 +36,8 @@
     <string name="err_select_location">Please select location</string>
     <string name="welcome_message">Welcome to the location reminder app</string>
 
+    <!--Dialog String-->
+    <string name="rationale_for_background_location">This App Always needs Background Location Permission to support Geofencing</string>
     <!-- Error strings -->
     <string name="geofence_unknown_error">Unknown error: the Geofence service is not available now.</string>
     <string name="geofence_not_available">Geofence service is not available now. Go to Settings>Location>Mode and choose High accuracy.</string>

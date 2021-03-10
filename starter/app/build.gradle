@@ -157,4 +157,7 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
     //Maps SDK for Android utility KTX library
     implementation 'com.google.maps.android:maps-utils-ktx:2.4.0'
+
+    //Material Components for Android
+    implementation 'com.google.android.material:material:1.4.0-alpha01'
 }

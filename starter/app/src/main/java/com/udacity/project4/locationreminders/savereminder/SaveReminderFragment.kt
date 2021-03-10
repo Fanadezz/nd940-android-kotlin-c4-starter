@@ -16,6 +16,7 @@ import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
@@ -66,7 +67,7 @@ class SaveReminderFragment : BaseFragment() {
 
         //initialize GeofencingClient
         geofencingClient = LocationServices.getGeofencingClient(requireActivity())
-Timber.i("onCreateView() for SaveReminderFragment Called")
+        Timber.i("onCreateView() for SaveReminderFragment Called")
         return binding.root
     }
 
@@ -137,14 +138,30 @@ Timber.i("onCreateView() for SaveReminderFragment Called")
     }
 
 
-    private val backgroundPermLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()){
+    private val backgroundPermLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()) {
 
         isGranted ->
-        if (isGranted){
+        if (isGranted) {
 
             Timber.i("Background Perm Sanctioned")
-        }
+        } else {
+            Timber.i("Background Perms Denied")
+            if (shouldShowRequestPermissionRationale(
+                            Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
+                val materialAlertDialogBuilder = MaterialAlertDialogBuilder(
+                        requireActivity()).setTitle("Location Permission")
+                        .setMessage(R.string.rationale_for_background_location)
+                        .setPositiveButton("OK") { dialog, _ ->
 
-        else  {Timber.i("Background Perms Denied")}
+                            dialog.dismiss()
+                        }
+                        .create()
+                        .show()
+
+            }
+
+
+        }
     }
 }
