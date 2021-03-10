@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.*
 import com.google.android.material.snackbar.Snackbar
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
+import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
 import com.udacity.project4.locationreminders.geofence.GeofenceBroadcastReceiver
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
@@ -57,9 +58,8 @@ class SelectLocationFragment : BaseFragment() {
     ): View {
 
 
-
-            //request for permission using Activity Result API
-            permissionCheckLauncher.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION/*,
+        //request for permission using Activity Result API
+        permissionCheckLauncher.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION/*,
                                                    Manifest.permission.ACCESS_FINE_LOCATION*/))
 
 
@@ -67,10 +67,6 @@ class SelectLocationFragment : BaseFragment() {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_select_location, container,
                                           false)
-
-
-
-
 
 
         //initialize fusedLocationProviderClient
@@ -181,7 +177,7 @@ class SelectLocationFragment : BaseFragment() {
                 permissions ->
 
                 if (
-                        permissions[Manifest.permission.ACCESS_FINE_LOCATION]== true) {
+                        permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true) {
 
                     getLastKnownLocation()
                     Timber.i("Permissions Granted")
@@ -215,8 +211,7 @@ class SelectLocationFragment : BaseFragment() {
         //         send back the selected location details to the view model
         //         and navigate back to the previous fragment to save the reminder and add the geofence
         if (poiIsInitialized) {
-            findNavController().navigate(SelectLocationFragmentDirections
-                                                 .actionSelectLocationFragmentToSaveReminderFragment())
+
 
             //set the poi value in the shared viewModel
             _viewModel.selectedPOI.value = selectedPOI
@@ -225,7 +220,11 @@ class SelectLocationFragment : BaseFragment() {
             _viewModel.latitude.value = poiLatLng.latitude
             _viewModel.longitude.value = poiLatLng.longitude
             _viewModel.reminderSelectedLocationStr.value = poiName
+            /*findNavController().navigate(SelectLocationFragmentDirections
+                                                 .actionSelectLocationFragmentToSaveReminderFragment())*/
 
+//Navigate back to SaveReminderFragment
+            _viewModel.navigationCommand.value = NavigationCommand.Back
 
         } else {
             Snackbar.make(binding.root, getString(R.string.pick_point_of_interest_msg),
