@@ -101,14 +101,14 @@ class SaveReminderFragment : BaseFragment() {
 
             _viewModel.validateAndSaveReminder(reminder)
 
-            //  _viewModel.saveReminder()
+
 
 //            TODO: use the user entered reminder details to:
 //             1) add a geofencing request
 //             2) save the reminder to the local db
 
 
-            //build geofence
+            /*//build geofence
             val geofence = Geofence.Builder()
                     .setRequestId(location)
                     .setCircularRegion(latitude!!,
@@ -132,7 +132,9 @@ class SaveReminderFragment : BaseFragment() {
                     .addOnFailureListener {
                         Timber.i("Geofence Addition Failed: $it")
                     }
-        }
+        }*/
+
+            }
     }
 
     override fun onDestroy() {

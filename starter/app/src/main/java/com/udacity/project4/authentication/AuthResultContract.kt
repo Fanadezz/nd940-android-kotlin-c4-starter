@@ -32,7 +32,7 @@ class AuthResultContract : ActivityResultContract<Int, IdpResponse>() {
                 .setLogo(R.drawable.ic_location)
                 .setTheme(R.style.AppTheme)
                 .setAvailableProviders(providers)
-                .setIsSmartLockEnabled(true)
+             /*   .setIsSmartLockEnabled(true)*/
                 .build()
                 .apply {
                     putExtra(INPUT_KEY, input)

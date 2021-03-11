@@ -3,9 +3,6 @@ package com.udacity.project4.locationreminders.savereminder.selectreminderlocati
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.PendingIntent
-import android.content.BroadcastReceiver
-import android.content.Intent
 import android.content.res.Resources
 import android.location.Location
 import android.os.Build
@@ -16,7 +13,6 @@ import android.widget.Toast.makeText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
-import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -28,10 +24,8 @@ import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
-import com.udacity.project4.locationreminders.geofence.GeofenceBroadcastReceiver
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
-import kotlinx.android.synthetic.main.fragment_select_location.*
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
@@ -59,7 +53,7 @@ class SelectLocationFragment : BaseFragment() {
 
 
         //request for permission using Activity Result API
-        permissionCheckLauncher.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION/*,
+        foregroundPermLauncher.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION/*,
                                                    Manifest.permission.ACCESS_FINE_LOCATION*/))
 
 
@@ -169,26 +163,6 @@ class SelectLocationFragment : BaseFragment() {
 
     }
 
-    //suppress permission check
-    @SuppressLint("MissingPermission")
-    private val permissionCheckLauncher =
-            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-
-                permissions ->
-
-                if (
-                        permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true) {
-
-                    getLastKnownLocation()
-                    Timber.i("Permissions Granted")
-                } else {
-
-                    Timber.i("Permissions Denied")
-                }
-
-
-            }
-
 
     @SuppressLint("MissingPermission")
     fun getLastKnownLocation() {
@@ -220,10 +194,9 @@ class SelectLocationFragment : BaseFragment() {
             _viewModel.latitude.value = poiLatLng.latitude
             _viewModel.longitude.value = poiLatLng.longitude
             _viewModel.reminderSelectedLocationStr.value = poiName
-            /*findNavController().navigate(SelectLocationFragmentDirections
-                                                 .actionSelectLocationFragmentToSaveReminderFragment())*/
 
-//Navigate back to SaveReminderFragment
+
+            //Navigate back to SaveReminderFragment
             _viewModel.navigationCommand.value = NavigationCommand.Back
 
         } else {
@@ -282,6 +255,38 @@ class SelectLocationFragment : BaseFragment() {
             Timber.i("Error: $e")
         }
 
+    }
+
+    //suppress permission check
+    @SuppressLint("MissingPermission")
+    private val foregroundPermLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+
+                permissions ->
+
+                if (
+                        permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true) {
+
+                    getLastKnownLocation()
+                    Timber.i("Permissions Granted")
+                } else {
+
+                    Timber.i("Permissions Denied")
+                }
+
+
+            }
+
+    private val backgroundPermLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()) {
+
+        isGranted ->
+        if (isGranted) {
+
+            Timber.i("Background Permissions Granted!")
+        } else {
+            Timber.i("Background Permissions Denied!")
+        }
     }
 
 
