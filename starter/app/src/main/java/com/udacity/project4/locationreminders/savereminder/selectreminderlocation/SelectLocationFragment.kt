@@ -3,13 +3,10 @@ package com.udacity.project4.locationreminders.savereminder.selectreminderlocati
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
-import android.location.LocationManager
-import android.content.Context.LOCATION_SERVICE
 import android.content.Intent
 import android.content.res.Resources
 import android.location.Location
-
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -20,7 +17,6 @@ import android.widget.Toast
 import android.widget.Toast.makeText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -93,7 +89,7 @@ class SelectLocationFragment : BaseFragment() {
         foregroundPermLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
-   
+
 
     override fun onStop() {
         super.onStop()
@@ -258,9 +254,7 @@ class SelectLocationFragment : BaseFragment() {
 
 
     private fun onLocationSelected() {
-        //        TODO: When the user confirms on the selected location,
-        //         send back the selected location details to the view model
-        //         and navigate back to the previous fragment to save the reminder and add the geofence
+
         if (poiIsInitialized) {
 
 
@@ -305,57 +299,7 @@ class SelectLocationFragment : BaseFragment() {
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.Q)
-    private fun checkDeviceLocationSettings(resolve: Boolean = true) {
 
-        Timber.i("checking location settings")
-        //val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-        //startActivity(intent)
-
-        /*val builder = LocationSettingsRequest.Builder()
-                .addLocationRequest(locationRequest)
-
-        val settingsClient = LocationServices.getSettingsClient(requireActivity())
-
-
-        val locationSettingsResponseTask = settingsClient.checkLocationSettings(builder.build())
-
-        locationSettingsResponseTask.addOnFailureListener { exception ->
-
-            if (exception is ResolvableApiException && resolve) {
-                try {
-Timber.i("trying to turn location on")
-                    exception.startResolutionForResult(activity,
-                                                       REQUEST_TURN_DEVICE_LOCATION_ON)
-                } catch (sendEx: IntentSender.SendIntentException) {
-
-                    Timber.i("Error getting location settings resolution: %s", sendEx.message)
-
-                }
-            } else {
-                Timber.i("unable turn location on")
-                Snackbar.make(binding.root, R.string.location_required_error,
-                              Snackbar.LENGTH_INDEFINITE)
-                        .setAction(android.R.string.ok) {
-
-                            checkDeviceLocationSettings()
-                        }
-                        .show()
-            }
-        }
-              locationSettingsResponseTask  .addOnCompleteListener {
-
-                    if (it.isSuccessful) {
-
-
-                        Timber.i("Resolution successful")
-
-                    } else {
-                        Timber.i("Resolution not successful")
-
-                    }
-                }*/
-    }
 
     private fun showRationale(permission: String) {
         if (shouldShowRequestPermissionRationale(permission)) {
@@ -486,6 +430,6 @@ Timber.i("trying to turn location on")
     }
 }
 
-private const val REQUEST_TURN_DEVICE_LOCATION_ON = 10019
+
 
 
