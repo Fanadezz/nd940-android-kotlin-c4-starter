@@ -26,6 +26,7 @@
     <string name="select_poi">Please select a point of interest</string>
     <string name="geofence_entered">Geofence Entered</string>
     <string name="channel_name">GeofenceStatus</string>
+    <string name="exit">Exit</string>
     <string name="notification_channel_description">Geofence status notification</string>
     <string name="content_text">Location Reminder</string>
     <string name="select_title">Please select title</string>
@@ -34,10 +35,13 @@
     <string name="welcome">Welcome</string>
     <string name="err_enter_title">Please enter title</string>
     <string name="err_select_location">Please select location</string>
+    <string name="enable_location">Enable Location </string>
+    <string name="enable_dialog_message">Please enable Locations in the Settings </string>
+
     <string name="welcome_message">Welcome to the location reminder app</string>
 
     <!--Dialog String-->
-    <string name="rationale_for_background_location">This App Always needs Background Location Permission to support Geofencing</string>
+    <string name="rationale_for_location_permissions">This App always needs Location Permission for best results. Please grant the permissions in the settings </string>
     <!-- Error strings -->
     <string name="geofence_unknown_error">Unknown error: the Geofence service is not available now.</string>
     <string name="geofence_not_available">Geofence service is not available now. Go to Settings>Location>Mode and choose High accuracy.</string>

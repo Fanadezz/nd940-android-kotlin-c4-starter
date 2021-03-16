@@ -67,7 +67,7 @@ class SaveReminderFragment : BaseFragment() {
 
         binding.viewModel = _viewModel
 
-        backgroundPermLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+
 
         //initialize GeofencingClient
         geofencingClient = LocationServices.getGeofencingClient(requireActivity())
@@ -102,7 +102,6 @@ class SaveReminderFragment : BaseFragment() {
             _viewModel.validateAndSaveReminder(reminder)
 
 
-
 //            TODO: use the user entered reminder details to:
 //             1) add a geofencing request
 //             2) save the reminder to the local db
@@ -134,7 +133,7 @@ class SaveReminderFragment : BaseFragment() {
                     }
         }*/
 
-            }
+        }
     }
 
     override fun onDestroy() {
@@ -144,92 +143,5 @@ class SaveReminderFragment : BaseFragment() {
     }
 
 
-    private val backgroundPermLauncher = registerForActivityResult(
-            ActivityResultContracts.RequestPermission()) {
 
-        isGranted ->
-        if (isGranted) {
-
-            Timber.i("Background Perm Sanctioned")
-        } else {
-            Timber.i("Background Perms Denied")
-            if (shouldShowRequestPermissionRationale(
-                            Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
-                val materialAlertDialogBuilder = MaterialAlertDialogBuilder(
-                        requireActivity()).setTitle("Location Permission")
-                        .setMessage(R.string.rationale_for_background_location)
-                        .setPositiveButton(R.string.settings) { dialog, _ ->
-
-                         startActivity(Intent().apply {
-
-                             action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                             data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
-                             flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                         })
-                        }.setNegativeButton(android.R.string.cancel){
-                            dialog, _ ->
-                            dialog.dismiss()
-                        }
-                        .create()
-                        .show()
-
-            }
-
-
-        }
     }
-    private fun checkDeviceLocationSettingsAndStartGeofence(resolve: Boolean = true) {
-
-        //create a location request object
-
-        val locationRequest = LocationRequest.create()
-                .apply {
-
-                    priority = LocationRequest.PRIORITY_LOW_POWER
-                }
-
-        //create location response task
-
-        val builder = LocationSettingsRequest.Builder()
-                .addLocationRequest(locationRequest)
-
-        val settingsClient = LocationServices.getSettingsClient(requireActivity())
-
-
-        val locationSettingsResponseTask = settingsClient.checkLocationSettings(builder.build())
-
-        locationSettingsResponseTask.addOnFailureListener { exception ->
-
-            if (exception is ResolvableApiException && resolve) {
-                try {
-
-                    exception.startResolutionForResult(activity,
-                                                       REQUEST_TURN_DEVICE_LOCATION_ON)
-                } catch (sendEx: IntentSender.SendIntentException) {
-
-                    Timber.i("Error getting location settings resolution: %s", sendEx.message)
-
-                }
-            } else {
-
-                Snackbar.make(binding.root, R.string.location_required_error,
-                              Snackbar.LENGTH_INDEFINITE)
-                        .setAction(android.R.string.ok) {
-
-                            checkDeviceLocationSettingsAndStartGeofence()
-                        }
-                        .show()
-            }
-        }
-                .addOnCompleteListener {
-
-                    if (it.isSuccessful) {
-
-
-                    }
-                }
-    }
-
-
-}
-private const val REQUEST_TURN_DEVICE_LOCATION_ON = 17
