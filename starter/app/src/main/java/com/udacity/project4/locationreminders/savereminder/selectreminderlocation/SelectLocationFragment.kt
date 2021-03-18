@@ -18,6 +18,8 @@ import android.widget.Toast.makeText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -94,6 +96,8 @@ class SelectLocationFragment : BaseFragment() {
     override fun onStop() {
         super.onStop()
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+        Timber.i("onStop() called")
+
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -129,7 +133,7 @@ class SelectLocationFragment : BaseFragment() {
 
         binding.buttonSave.setOnClickListener {
 
-            onLocationSelected()
+
             backgroundPermLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
         }
 //        TODO: call this function after the user confirms on the selected location
@@ -257,7 +261,6 @@ class SelectLocationFragment : BaseFragment() {
 
         if (poiIsInitialized) {
 
-
             //set the poi value in the shared viewModel
             _viewModel.selectedPOI.value = selectedPOI
 
@@ -265,7 +268,6 @@ class SelectLocationFragment : BaseFragment() {
             _viewModel.latitude.value = poiLatLng.latitude
             _viewModel.longitude.value = poiLatLng.longitude
             _viewModel.reminderSelectedLocationStr.value = poiName
-
 
             //Navigate back to SaveReminderFragment
             _viewModel.navigationCommand.value = NavigationCommand.Back
@@ -287,19 +289,14 @@ class SelectLocationFragment : BaseFragment() {
         if (isGranted) {
 
             Timber.i("Background Permissions Granted!")
-            getLastKnownLocation()
+            onLocationSelected()
         } else {
             Timber.i("Background Perms Denied")
 
             showRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
 
         }
-
-
     }
-
-
-
 
     private fun showRationale(permission: String) {
         if (shouldShowRequestPermissionRationale(permission)) {
@@ -315,6 +312,7 @@ class SelectLocationFragment : BaseFragment() {
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK
                         })
 
+                        dialog.dismiss()
 
                     }
                     .setNegativeButton(android.R.string.cancel) { dialog, _ ->
@@ -325,7 +323,7 @@ class SelectLocationFragment : BaseFragment() {
                                     showSnackBar(
                                             getString(R.string.rationale_for_location_permissions))
                                 }
-                                .show()
+
                     }
                     .create()
             materialAlertDialogBuilder.show()
@@ -402,7 +400,6 @@ class SelectLocationFragment : BaseFragment() {
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun isLocationEnabled(): Boolean {
-
         val locationManager = requireActivity().getSystemService(LocationManager::class.java)
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager
                 .isProviderEnabled(LocationManager.NETWORK_PROVIDER)

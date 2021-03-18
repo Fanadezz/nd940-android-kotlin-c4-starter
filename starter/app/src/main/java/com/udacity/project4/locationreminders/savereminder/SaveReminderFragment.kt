@@ -89,15 +89,15 @@ class SaveReminderFragment : BaseFragment() {
 
         //set setOnClickListener to FAB
         binding.saveReminder.setOnClickListener {
-            val title = _viewModel.reminderTitle.value
+            val title = _viewModel.reminderTitle.value!!
             val description = _viewModel.reminderDescription.value
-            val location = _viewModel.reminderSelectedLocationStr.value
-            val latitude = _viewModel.latitude.value
-            val longitude = _viewModel.longitude.value
-            val id = _viewModel.reminderSelectedLocationStr.value
+            val location = _viewModel.reminderSelectedLocationStr.value!!
+            val latitude = _viewModel.latitude.value!!
+            val longitude = _viewModel.longitude.value!!
+            val id = _viewModel.reminderSelectedLocationStr.value!!
 
             val reminder = ReminderDataItem(title = title, description = description, location =
-            location, latitude = latitude, longitude = longitude, id = id!!)
+            location, latitude = latitude, longitude = longitude, id = id)
 
             _viewModel.validateAndSaveReminder(reminder)
 
@@ -106,14 +106,26 @@ class SaveReminderFragment : BaseFragment() {
 //             1) add a geofencing request
 //             2) save the reminder to the local db
 
+addGeofence(location, latitude, longitude)
 
-            /*//build geofence
+
+        }
+    }
+
+
+
+    @SuppressLint("MissingPermission")
+    private fun addGeofence(location:String,latitude:Double,longitude:Double){
+
+
+        //build geofence object
             val geofence = Geofence.Builder()
                     .setRequestId(location)
-                    .setCircularRegion(latitude!!,
-                                       longitude!!,
+                    .setCircularRegion(latitude,
+                                       longitude,
                                        RADIUS_IN_METRES)
                     .setExpirationDuration(EXPIRY_TIME)
+                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
                     .build()
 
             //build a geofencing request
@@ -126,15 +138,12 @@ class SaveReminderFragment : BaseFragment() {
             geofencingClient.addGeofences(geofencingRequest, pendingIntent)
                     .addOnSuccessListener {
 
-                        Timber.i("Geofence added successfull")
+                        Timber.i("Geofence added successfully")
                     }
                     .addOnFailureListener {
                         Timber.i("Geofence Addition Failed: $it")
                     }
-        }*/
-
         }
-    }
 
     override fun onDestroy() {
         super.onDestroy()
