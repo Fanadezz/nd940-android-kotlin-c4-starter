@@ -3,6 +3,12 @@ package com.udacity.project4.locationreminders.geofence
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.google.android.gms.location.Geofence
+import com.google.android.gms.location.GeofenceStatusCodes
+import com.google.android.gms.location.GeofencingEvent
+import com.udacity.project4.R
+import com.udacity.project4.locationreminders.savereminder.SaveReminderFragment
+import timber.log.Timber
 
 /**
  * Triggered by the Geofence.  Since we can have many Geofences at once, we pull the request
@@ -18,6 +24,36 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
 
 //TODO: implement the onReceive method to receive the geofencing events at the background
+
+        if (intent.action == SaveReminderFragment.ACTION_GEOFENCE_EVENT){
+
+            val geofencingEvent = GeofencingEvent.fromIntent(intent)
+
+            //check for errors on the GeofencingEvent
+            if (geofencingEvent.hasError()){
+
+                val error = errorMessage(context,geofencingEvent.errorCode)
+                Timber.i("Error: $error")
+            }
+
+            if (geofencingEvent.geofenceTransition== Geofence.GEOFENCE_TRANSITION_ENTER){
+
+                Timber.i(context.getString(R.string.transition_enter_found))
+            }
+        }
+
+    }
+
+    private fun errorMessage(context:Context, errorCode: Int): String {
+
+
+        return when(errorCode ){
+
+            GeofenceStatusCodes.GEOFENCE_NOT_AVAILABLE ->{context.getString(R.string.no_geofence)}
+            GeofenceStatusCodes.GEOFENCE_TOO_MANY_GEOFENCES ->{context.getString(R.string.too_many_geofences)}
+            GeofenceStatusCodes.GEOFENCE_TOO_MANY_PENDING_INTENTS ->{context.getString(R.string.too_many_pending_intents)}
+            else -> context.getString(R.string.unknown_geofence_error)
+        }
 
     }
 }

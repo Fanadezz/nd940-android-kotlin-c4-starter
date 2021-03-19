@@ -51,4 +51,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="pick_point_of_interest_msg">Please pick a Point of Interest</string>
+    <string name="unknown_geofence_error">Unknown Geofence Error</string>
+    <string name="no_geofence">Geofence not found</string>
+    <string name="too_many_geofences">Too many Geofences registered</string>
+    <string name="too_many_pending_intents">Too many PendingIntents provided</string>
+    <string name="transition_enter_found">GEOFENCE_TRANSITION_ENTER found</string>
 </resources>
