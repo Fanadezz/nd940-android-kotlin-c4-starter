@@ -24,6 +24,7 @@ import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentSaveReminderBinding
+import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.geofence.GeofenceBroadcastReceiver
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import com.udacity.project4.locationreminders.savereminder.SaveReminderFragment.Companion.ACTION_GEOFENCE_EVENT
@@ -91,14 +92,25 @@ class SaveReminderFragment : BaseFragment() {
         binding.saveReminder.setOnClickListener {
             val title = _viewModel.reminderTitle.value
             val description = _viewModel.reminderDescription.value
-            val location = _viewModel.reminderSelectedLocationStr.value!!
-            val latitude = _viewModel.latitude.value!!
-            val longitude = _viewModel.longitude.value!!
+            val location = _viewModel.reminderSelectedLocationStr.value
+            val latitude = _viewModel.latitude.value
+            val longitude = _viewModel.longitude.value
+
+            val reminder = ReminderDataItem(
+                    title = title,
+                    description = description,
+                    latitude = latitude,
+                    longitude = longitude,
+                    location = location
+                )
+Timber.i("the reminder is $reminder")
+
+if (reminder.longitude!=null && reminder.latitude!=null){
+    addGeofence(reminder)
+}
 
 
-            val reminder = ReminderDataItem(title = title, description = description, location =
-            location, latitude = latitude, longitude = longitude, )
-            addGeofence(location, latitude, longitude)
+
             _viewModel.validateAndSaveReminder(reminder)
 
 
@@ -113,16 +125,15 @@ class SaveReminderFragment : BaseFragment() {
     }
 
 
-
     @SuppressLint("MissingPermission")
-    private fun addGeofence(location:String,latitude:Double,longitude:Double){
+    private fun addGeofence(reminder: ReminderDataItem){
 
 
         //build geofence object
             val geofence = Geofence.Builder()
-                    .setRequestId(location)
-                    .setCircularRegion(latitude,
-                                       longitude,
+                    .setRequestId(reminder.id)
+                    .setCircularRegion(reminder.latitude!!,
+                                       reminder.longitude!!,
                                        RADIUS_IN_METRES)
                     .setExpirationDuration(EXPIRY_TIME)
                     .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
