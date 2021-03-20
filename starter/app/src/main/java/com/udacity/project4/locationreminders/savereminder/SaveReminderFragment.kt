@@ -135,6 +135,11 @@ if (reminder.longitude!=null && reminder.latitude!=null){
                     .addGeofence(geofence)
                     .build()
 
+        /*remove geofence pending intent first then add it to ensure that your
+        * new geofence pending intent replaces the old one if there was any*/
+
+        geofencingClient.removeGeofences(pendingIntent).addOnCompleteListener {
+
             geofencingClient.addGeofences(geofencingRequest, pendingIntent)
                     .addOnSuccessListener {
 
@@ -143,6 +148,9 @@ if (reminder.longitude!=null && reminder.latitude!=null){
                     .addOnFailureListener {
                         Timber.i("Geofence Addition Failed: $it")
                     }
+        }
+
+
         }
 
     override fun onDestroy() {
