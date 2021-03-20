@@ -47,7 +47,7 @@ class AuthenticationActivity : AppCompatActivity() {
                 LoginViewModel.AuthStateEnum.AUTHENTICATED -> {
                     //redirect to RemindersActivity if signed-in using an intent
                     startActivity(Intent(this, RemindersActivity::class.java))
-
+finish()
                 }
                 else -> {
 

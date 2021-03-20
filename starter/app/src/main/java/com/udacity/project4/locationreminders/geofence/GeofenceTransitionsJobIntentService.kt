@@ -81,6 +81,8 @@ Timber.i("Request Id is $requestId")
         val remindersLocalRepository: RemindersLocalRepository by inject()
 //        Interaction to the repository has to be through a coroutine scope
         CoroutineScope(coroutineContext).launch(SupervisorJob()) {
+
+            Timber.i("Entering Coroutine Scope")
             //get the reminder with the request id
             val result = remindersLocalRepository.getReminder(requestId)
             if (result is Result.Success<ReminderDTO>) {
@@ -96,6 +98,8 @@ Timber.i("Request Id is $requestId")
                         reminderDTO.id
                 )
                 )
+
+                Timber.i("Send Notification called")
             }
         }
     }
