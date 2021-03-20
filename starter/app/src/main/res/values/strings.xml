@@ -26,7 +26,9 @@
     <string name="select_poi">Please select a point of interest</string>
     <string name="geofence_entered">Geofence Entered</string>
     <string name="channel_name">GeofenceStatus</string>
+
     <string name="exit">Exit</string>
+    <string name="back_label">Back</string>
     <string name="notification_channel_description">Geofence status notification</string>
     <string name="content_text">Location Reminder</string>
     <string name="select_title">Please select title</string>
@@ -56,4 +58,6 @@
     <string name="too_many_geofences">Too many Geofences registered</string>
     <string name="too_many_pending_intents">Too many PendingIntents provided</string>
     <string name="transition_enter_found">GEOFENCE_TRANSITION_ENTER found</string>
+    <string name="place_name">Place:</string>
+    <string name="description_label">Description:</string>
 </resources>
