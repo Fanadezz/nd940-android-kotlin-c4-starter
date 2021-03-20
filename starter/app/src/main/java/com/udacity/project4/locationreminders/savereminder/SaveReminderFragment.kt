@@ -53,7 +53,7 @@ class SaveReminderFragment : BaseFragment() {
 
         const val ACTION_GEOFENCE_EVENT = "SelectLocationFragment.ACTION_GEOFENCE_EVENT"
         const val RADIUS_IN_METRES = 100f
-        val EXPIRY_TIME: Long = TimeUnit.HOURS.toMillis(1)
+        val EXPIRY_TIME: Long = TimeUnit.HOURS.toMillis(3)
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -108,17 +108,6 @@ class SaveReminderFragment : BaseFragment() {
 if (reminder.longitude!=null && reminder.latitude!=null){
     addGeofence(reminder)
 }
-
-
-
-
-
-
-//            TODO: use the user entered reminder details to:
-//             1) add a geofencing request
-//             2) save the reminder to the local db
-
-
 
 
         }

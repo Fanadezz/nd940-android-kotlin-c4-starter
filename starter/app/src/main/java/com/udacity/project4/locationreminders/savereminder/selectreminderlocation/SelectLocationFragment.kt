@@ -106,9 +106,6 @@ class SelectLocationFragment : BaseFragment() {
         //initialize map
         map = it
 
-        //add my Location Button on top-right side corner
-        map.isMyLocationEnabled = true
-
         //add map customization
         styleBaseMap(map)
         onPointOfInterestClick()
@@ -170,6 +167,8 @@ class SelectLocationFragment : BaseFragment() {
 
                     getLastKnownLocation()
 
+                    //add my Location Button on top-right side corner
+                    map.isMyLocationEnabled = true
                 } else {
 
                     Timber.i("Permissions Denied")

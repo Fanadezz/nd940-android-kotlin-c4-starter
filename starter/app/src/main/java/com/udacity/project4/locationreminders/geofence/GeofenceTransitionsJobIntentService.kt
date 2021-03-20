@@ -30,38 +30,38 @@ class GeofenceTransitionsJobIntentService : JobIntentService(), CoroutineScope {
         //        TODO: call this to start the JobIntentService to handle the geofencing transition events
         fun enqueueWork(context: Context, intent: Intent) {
             enqueueWork(
-                context,
-                GeofenceTransitionsJobIntentService::class.java, JOB_ID,
-                intent
+                    context,
+                    GeofenceTransitionsJobIntentService::class.java, JOB_ID,
+                    intent
             )
         }
     }
 
     override fun onHandleWork(intent: Intent) {
 
+        val geofencingEvent = GeofencingEvent.fromIntent(intent)
 
-
-
-        if (intent.action == SaveReminderFragment.ACTION_GEOFENCE_EVENT){
-            val geofencingEvent = GeofencingEvent.fromIntent(intent)
-
+        if(intent.action == SaveReminderFragment.ACTION_GEOFENCE_EVENT){
 
             //check for errors on the GeofencingEvent
-            if (geofencingEvent.hasError()){
-
+            if (geofencingEvent.hasError()) {
                 val error = GeofenceStatusCodes.getStatusCodeString(geofencingEvent.errorCode)
                 Timber.i("Error: $error")
 
                 return
             }
+            if (geofencingEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
 
-            if (geofencingEvent.geofenceTransition== Geofence.GEOFENCE_TRANSITION_ENTER){
+                Timber.i("getString(R.string.transition_enter_found")
 
-                Timber.i(getString(R.string.transition_enter_found))
-
-sendNotification(geofencingEvent.triggeringGeofences)
+                sendNotification(geofencingEvent.triggeringGeofences)
             }
         }
+
+
+
+
+
         //TODO: handle the geofencing transition events and
         // send a notification to the user when he enters the geofence area
         //TODO call @sendNotification
@@ -69,9 +69,11 @@ sendNotification(geofencingEvent.triggeringGeofences)
 
     //TODO: get the request id of the current geofence
     private fun sendNotification(triggeringGeofences: List<Geofence>) {
-        val requestId = when{
+        val requestId = when {
 
-            triggeringGeofences.isNotEmpty() -> {triggeringGeofences[0].requestId}
+            triggeringGeofences.isNotEmpty() -> {
+                triggeringGeofences[0].requestId
+            }
             else -> return
         }
 
@@ -85,14 +87,14 @@ sendNotification(geofencingEvent.triggeringGeofences)
                 val reminderDTO = result.data
                 //send a notification to the user with the reminder details
                 sendNotification(
-                    this@GeofenceTransitionsJobIntentService, ReminderDataItem(
+                        this@GeofenceTransitionsJobIntentService, ReminderDataItem(
                         reminderDTO.title,
                         reminderDTO.description,
                         reminderDTO.location,
                         reminderDTO.latitude,
                         reminderDTO.longitude,
                         reminderDTO.id
-                    )
+                )
                 )
             }
         }

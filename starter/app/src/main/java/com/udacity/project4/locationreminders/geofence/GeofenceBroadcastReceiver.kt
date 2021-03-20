@@ -25,11 +25,11 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
 
         Timber.i("onReceive() called")
 
-        if (intent.action ==SaveReminderFragment.ACTION_GEOFENCE_EVENT){
+
 
             GeofenceTransitionsJobIntentService.enqueueWork(context,intent)
 
-        }
+
 
 //TODO: implement the onReceive method to receive the geofencing events at the background
 
@@ -37,16 +37,5 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
 
     }
 
-    /*private fun errorMessage(context:Context, errorCode: Int): String {
-
-
-        return when(errorCode ){
-
-            GeofenceStatusCodes.GEOFENCE_NOT_AVAILABLE ->{context.getString(R.string.no_geofence)}
-            GeofenceStatusCodes.GEOFENCE_TOO_MANY_GEOFENCES ->{context.getString(R.string.too_many_geofences)}
-            GeofenceStatusCodes.GEOFENCE_TOO_MANY_PENDING_INTENTS ->{context.getString(R.string.too_many_pending_intents)}
-            else -> context.getString(R.string.unknown_geofence_error)
-        }
-
-    }*/
+    
 }
