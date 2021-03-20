@@ -52,7 +52,7 @@ class GeofenceTransitionsJobIntentService : JobIntentService(), CoroutineScope {
             }
             if (geofencingEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
 
-                Timber.i("getString(R.string.transition_enter_found")
+                Timber.i("Transition_enter_found")
 
                 sendNotification(geofencingEvent.triggeringGeofences)
             }
@@ -76,7 +76,7 @@ class GeofenceTransitionsJobIntentService : JobIntentService(), CoroutineScope {
             }
             else -> return
         }
-
+Timber.i("Request Id is $requestId")
         //Get the local repository instance
         val remindersLocalRepository: RemindersLocalRepository by inject()
 //        Interaction to the repository has to be through a coroutine scope

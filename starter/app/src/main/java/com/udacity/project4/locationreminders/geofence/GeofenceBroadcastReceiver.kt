@@ -25,8 +25,6 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
 
         Timber.i("onReceive() called")
 
-
-
             GeofenceTransitionsJobIntentService.enqueueWork(context,intent)
 
 
@@ -37,5 +35,5 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
 
     }
 
-    
+
 }
