@@ -103,15 +103,15 @@ class SaveReminderFragment : BaseFragment() {
                     longitude = longitude,
                     location = location
                 )
-Timber.i("the reminder is $reminder")
-
+            _viewModel.validateAndSaveReminder(reminder)
+//Null Check
 if (reminder.longitude!=null && reminder.latitude!=null){
     addGeofence(reminder)
 }
 
 
 
-            _viewModel.validateAndSaveReminder(reminder)
+
 
 
 //            TODO: use the user entered reminder details to:

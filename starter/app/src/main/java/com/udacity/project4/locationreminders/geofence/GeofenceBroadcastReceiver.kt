@@ -23,28 +23,21 @@ import timber.log.Timber
 class GeofenceBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
 
+        Timber.i("onReceive() called")
+
+        if (intent.action ==SaveReminderFragment.ACTION_GEOFENCE_EVENT){
+
+            GeofenceTransitionsJobIntentService.enqueueWork(context,intent)
+
+        }
+
 //TODO: implement the onReceive method to receive the geofencing events at the background
 
-        if (intent.action == SaveReminderFragment.ACTION_GEOFENCE_EVENT){
 
-            val geofencingEvent = GeofencingEvent.fromIntent(intent)
-
-            //check for errors on the GeofencingEvent
-            if (geofencingEvent.hasError()){
-
-                val error = errorMessage(context,geofencingEvent.errorCode)
-                Timber.i("Error: $error")
-            }
-
-            if (geofencingEvent.geofenceTransition== Geofence.GEOFENCE_TRANSITION_ENTER){
-
-                Timber.i(context.getString(R.string.transition_enter_found))
-            }
-        }
 
     }
 
-    private fun errorMessage(context:Context, errorCode: Int): String {
+    /*private fun errorMessage(context:Context, errorCode: Int): String {
 
 
         return when(errorCode ){
@@ -55,5 +48,5 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
             else -> context.getString(R.string.unknown_geofence_error)
         }
 
-    }
+    }*/
 }

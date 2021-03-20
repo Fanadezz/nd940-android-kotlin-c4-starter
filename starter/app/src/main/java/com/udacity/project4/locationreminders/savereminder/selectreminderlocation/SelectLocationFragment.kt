@@ -100,11 +100,18 @@ class SelectLocationFragment : BaseFragment() {
 
     }
 
+    @SuppressLint("MissingPermission")
     @RequiresApi(Build.VERSION_CODES.Q)
     private val onMapReadyCallback = OnMapReadyCallback {
         //initialize map
         map = it
 
+        //add my Location Button on top-right side corner
+        map.isMyLocationEnabled = true
+
+        //add map customization
+        styleBaseMap(map)
+        onPointOfInterestClick()
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -203,10 +210,9 @@ class SelectLocationFragment : BaseFragment() {
     private fun moveCameraAndAddMarker(location: Location) {
 
         Timber.i("Moving the camera")
-        //clear any marker first
-        map.clear()
 
-        poiIsInitialized = false
+
+
 
         val latLng = LatLng(location.latitude, location.longitude)
 
@@ -221,16 +227,20 @@ class SelectLocationFragment : BaseFragment() {
 
         //move camera
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18F))
-        //add my Location Button on top-right side corner
-        map.isMyLocationEnabled = true
 
-        //add map customization
-        styleBaseMap(map)
 
+
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun onPointOfInterestClick() {
         map.setOnPoiClickListener {
 
             //clear markers
             map.clear()
+            poiIsInitialized = false
+
 
             //add poiMarker
             val poiMarker = map.addMarker(MarkerOptions().position(it.latLng)
@@ -253,7 +263,6 @@ class SelectLocationFragment : BaseFragment() {
             //set poi name
             poiName = it.name
         }
-
     }
 
 
