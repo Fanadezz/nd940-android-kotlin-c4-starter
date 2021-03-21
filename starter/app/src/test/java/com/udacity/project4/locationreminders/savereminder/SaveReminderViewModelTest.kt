@@ -17,7 +17,7 @@ class SaveReminderViewModelTest {
 
     @Test
     fun saveReminder_savesNewReminder() {
-val viewModel = SaveReminderViewModel(ApplicationProvider.getApplicationContext(), ReminderDataSource)
+//val viewModel = SaveReminderViewModel(ApplicationProvider.getApplicationContext(), ReminderDataSource)
     }
 
 
