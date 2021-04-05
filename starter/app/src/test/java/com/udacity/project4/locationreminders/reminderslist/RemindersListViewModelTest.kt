@@ -5,14 +5,14 @@ import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.udacity.project4.locationreminders.MainCoroutineRule
 import com.udacity.project4.locationreminders.data.FakeDataSource
-import com.udacity.project4.locationreminders.data.ReminderDataSource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.hamcrest.CoreMatchers.*
+
 
 @RunWith(AndroidJUnit4::class)
 @ExperimentalCoroutinesApi
@@ -22,7 +22,7 @@ class RemindersListViewModelTest {
     private lateinit var dataSource: FakeDataSource
 
     //subject under test
-    private lateinit var viewModel:RemindersListViewModel
+    private lateinit var viewModel: RemindersListViewModel
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -32,7 +32,7 @@ class RemindersListViewModelTest {
 
 
     @Before
-    fun init(){
+    fun init() {
 
         //swap data source
         dataSource = FakeDataSource()
@@ -42,14 +42,19 @@ class RemindersListViewModelTest {
 
     }
 
-@Test
-fun deleteAllReminders_remindersListEmpty() = mainCoroutineRule.runBlockingTest{
+    @Test
+    fun deleteAllReminders_remindersListEmpty() = mainCoroutineRule.runBlockingTest {
 
-    //delete data
-    dataSource.deleteAllReminders()
+        //delete data
+        dataSource.deleteAllReminders()
+//load reminders
+    viewModel.loadReminders()
 
-    assertThat()
-}
+
+        viewModel.remindersList.getOrAwaitValue()
+        //assertThat(viewModel.remindersList.getOrAwaitValue(), `is`(0))
+
+    }
 
     //TODO: provide testing to the RemindersListViewModel and its live data objects
 
