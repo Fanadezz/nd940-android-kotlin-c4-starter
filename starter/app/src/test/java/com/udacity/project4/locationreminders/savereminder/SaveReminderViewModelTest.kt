@@ -5,6 +5,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.core.IsEqual
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -18,6 +20,8 @@ class SaveReminderViewModelTest {
     @Test
     fun saveReminder_savesNewReminder() {
 //val viewModel = SaveReminderViewModel(ApplicationProvider.getApplicationContext(), ReminderDataSource)
+
+        assertThat(2, IsEqual(2))
     }
 
 
