@@ -70,6 +70,7 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
     fun validateEnteredData(reminderData: ReminderDataItem): Boolean {
         if (reminderData.title.isNullOrEmpty()) {
             showSnackBarInt.value = R.string.err_enter_title
+
             return false
         }
 
@@ -79,4 +80,6 @@ class SaveReminderViewModel(val app: Application, val dataSource: ReminderDataSo
         }
         return true
     }
+
+
 }
