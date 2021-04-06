@@ -54,10 +54,6 @@ class SaveReminderViewModelTest {
     fun tearDown() {
         stopKoin()
     }
-    @Test
-    fun myTest_myTest() {
 
-        val a =  viewModel. reminderTitle.getOrAwaitValue()
-    }
 
 }

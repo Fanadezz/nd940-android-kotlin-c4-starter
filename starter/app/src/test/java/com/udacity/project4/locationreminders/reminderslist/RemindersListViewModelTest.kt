@@ -72,7 +72,8 @@ class RemindersListViewModelTest {
         dataSource.saveReminder(reminder)
         viewModel.loadReminders()
         //THEN - reminder list is not empty
-        assertThat(viewModel.remindersList.getOrAwaitValue().isNotEmpty(), `is`(true))
+        assertThat(viewModel.remindersList.getOrAwaitValue()
+                           .isNotEmpty(), `is`(true))
     }
 
     @Test
@@ -94,14 +95,12 @@ class RemindersListViewModelTest {
         dataSource.shouldReturnError(true)
         viewModel.loadReminders()
 
-//Then assert that an error is displayed
+        //Then assert that an error is displayed
         assertThat(
-            ((viewModel.showSnackBar) as LiveData<*>).getOrAwaitValue() == "Test Exception",
-            `is`(true)
+                viewModel.showSnackBar.getOrAwaitValue() == "Test Exception", `is`(true)
         )
 
     }
-
 
 
     //TODO: provide testing to the RemindersListViewModel and its live data objects
