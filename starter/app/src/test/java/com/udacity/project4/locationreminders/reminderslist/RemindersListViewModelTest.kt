@@ -96,8 +96,7 @@ class RemindersListViewModelTest {
         viewModel.loadReminders()
 
         //Then assert that an error is displayed
-        assertThat(
-                viewModel.showSnackBar.getOrAwaitValue() == "Test Exception", `is`(true)
+        assertThat(viewModel.showSnackBar.getOrAwaitValue() == "Test Exception", `is`(true)
         )
 
     }

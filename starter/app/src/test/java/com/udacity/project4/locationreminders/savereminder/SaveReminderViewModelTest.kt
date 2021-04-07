@@ -1,27 +1,30 @@
 package com.udacity.project4.locationreminders.savereminder
 
+import android.os.Build
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.udacity.project4.locationreminders.MainCoroutineRule
 import com.udacity.project4.locationreminders.data.FakeDataSource
-import com.udacity.project4.locationreminders.data.ReminderDataSource
-import com.udacity.project4.locationreminders.reminderslist.RemindersListViewModel
-
+import com.udacity.project4.locationreminders.getOrAwaitValue
+import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.core.IsEqual
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.core.context.stopKoin
+import org.robolectric.annotation.Config
 
 @SmallTest
 @RunWith(AndroidJUnit4::class)
 @ExperimentalCoroutinesApi
+@Config(sdk = [Build.VERSION_CODES.P])
 class SaveReminderViewModelTest {
 
     //date source
@@ -53,6 +56,51 @@ class SaveReminderViewModelTest {
     @After
     fun tearDown() {
         stopKoin()
+    }
+
+    @Test
+    fun onClear_reminderNull() {
+        //GIVEN - onClear() called
+
+        viewModel.onClear()
+
+        //WHEN - testing LiveData
+
+        //THEN - LiveData is null
+        assertThat(viewModel.reminderTitle.getOrAwaitValue(), `is`(nullValue()))
+        assertThat(viewModel.reminderDescription.getOrAwaitValue(), `is`(nullValue()))
+        assertThat(viewModel.reminderSelectedLocationStr.getOrAwaitValue(), `is`(nullValue()))
+        assertThat(viewModel.selectedPOI.getOrAwaitValue(), `is`(nullValue()))
+        assertThat(viewModel.latitude.getOrAwaitValue(), `is`(nullValue()))
+        assertThat(viewModel.longitude.getOrAwaitValue(), `is`(nullValue()))
+    }
+
+    @Test
+    fun validateEnteredData_whenTitleIsEmpty_returnFalse() {
+
+        //GIVEN - a reminder to validate
+        val reminder = ReminderDataItem("Title", "Description", "Loc", 0.0, 0.0)
+
+        //WHEN - Title is empty
+        reminder.title = ""
+
+        //THEN - return false
+        assertThat(viewModel.validateEnteredData(reminder), `is`(false))
+
+    }
+
+    @Test
+    fun validateEnteredData_whenLocationIsEmpty_returnFalse() {
+
+        //GIVEN - a reminder to validate
+        val reminder = ReminderDataItem("Title", "Description", "Loc", 0.0, 0.0)
+
+        //WHEN - Location is null
+        reminder.location = ""
+
+        //THEN - return false
+        assertThat(viewModel.validateEnteredData(reminder), `is`(false))
+
     }
 
 
