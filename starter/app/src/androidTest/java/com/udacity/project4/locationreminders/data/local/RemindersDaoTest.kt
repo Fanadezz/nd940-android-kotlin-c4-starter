@@ -8,6 +8,7 @@ import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;
 import com.google.android.gms.tasks.Task
+import com.udacity.project4.MainCoroutineRule
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 
 import org.junit.Before;
@@ -52,7 +53,7 @@ class RemindersDaoTest {
         database.close()
     }
     @Test
-    fun insertReminder_getBReminderById() = mainCoroutineRule.runBlockingTest {
+    fun saveReminder_getReminderById() = mainCoroutineRule.runBlockingTest {
 
         //GIVEN - insert reminder
         val reminder = ReminderDTO(
@@ -77,7 +78,7 @@ class RemindersDaoTest {
         assertThat(loadedReminder.title, `is`(loadedReminder.title))
         assertThat(loadedReminder.description, `is`(loadedReminder.description))
         assertThat(loadedReminder.location, `is`(loadedReminder.location))
-        assertThat(loadedReminder.latitude, `is`(loadedReminder.location))
+        assertThat(loadedReminder.latitude, `is`(loadedReminder.latitude))
         assertThat(loadedReminder.longitude ,`is`(loadedReminder.longitude))
     }
 
