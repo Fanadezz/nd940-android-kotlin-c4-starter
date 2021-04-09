@@ -99,7 +99,7 @@ dependencies {
     //Koin
     implementation "org.koin:koin-android:$koinVersion"
     implementation "org.koin:koin-androidx-viewmodel:$koinVersion"
-
+    implementation group: 'org.koin', name: 'koin-core-ext', version: '2.0.1'
 
     // Dependencies for local unit tests
     testImplementation "junit:junit:$junitVersion"
