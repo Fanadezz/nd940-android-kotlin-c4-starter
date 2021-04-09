@@ -10,9 +10,8 @@ import androidx.test.filters.SmallTest;
 import com.google.android.gms.tasks.Task
 import com.udacity.project4.MainCoroutineRule
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
+import com.udacity.project4.locationreminders.data.dto.Result
 
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.runner.RunWith;
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi;
@@ -20,8 +19,8 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.After
-import org.junit.Test
+import org.junit.*
+import java.util.*
 
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
@@ -64,13 +63,10 @@ class RemindersDaoTest {
             longitude = 0.0,
 
         )
-
-
         database.reminderDao().saveReminder(reminder)
 
-        //WHEN - get reminder by id from the database
+        //WHEN - retrieving the reminder by Id from the database
         val loadedReminder = database.reminderDao().getReminderById(reminder.id)
-
 
         //THEN - the loaded data matches/contains the inserted reminder
         assertThat(loadedReminder as ReminderDTO, notNullValue()) // assert non-null task came back
@@ -81,6 +77,17 @@ class RemindersDaoTest {
         assertThat(loadedReminder.latitude, `is`(loadedReminder.latitude))
         assertThat(loadedReminder.longitude ,`is`(loadedReminder.longitude))
     }
+    @Test
+    fun getReminderByInvalidId_returnNull() = mainCoroutineRule.runBlockingTest {
+        // GIVEN - a randomly generated reminder Id
+        val randomId = UUID.randomUUID()
+                .toString()
+        // WHEN - retrieving a reminder using the random Id
+        val loadedResult = database.reminderDao()
+                .getReminderById(randomId)
 
+        // THEN - returned result is null
+        Assert.assertNull(loadedResult)
 
+    }
 }

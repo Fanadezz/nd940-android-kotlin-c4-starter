@@ -25,7 +25,40 @@ import org.mockito.Mockito.verify
 @MediumTest
 class ReminderListFragmentTest {
 
-//    TODO: test the navigation of the fragments.
-//    TODO: test the displayed data on the UI.
-//    TODO: add testing for the error messages.
+
+
+
+    //    TODO: test the navigation of the fragments.
+
+    //Test the navigation of the fragments.
+    @Test
+    fun clickFabButton_navigateToSelectLocation() {
+
+        //GIVEN - ReminderListFragment
+        val fragmentScenario = launchFragmentInContainer<ReminderListFragment>(Bundle(),
+                                                                               R.style.AppTheme)
+        val navController = mock(NavController::class.java)
+
+        fragmentScenario.onFragment {
+
+            //here we can call methods on the fragment itself
+            Navigation.setViewNavController(it.view!!, navController)
+        }
+
+        //WHEN - clicking FAB button
+        onView(withId(R.id.addReminderFAB)).perform(click())
+
+        //THEN - navigates to SaveReminderFragment
+verify(navController).navigate(ReminderListFragmentDirections.toSaveReminder())
+    }
+    //    TODO: test the displayed data on the UI.
+
+    @Test
+    fun putText(){
+
+
+
+
+    }
+    //    TODO: add testing for the error messages.
 }
