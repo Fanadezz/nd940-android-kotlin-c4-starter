@@ -131,17 +131,13 @@ class SelectLocationFragment : BaseFragment() {
         setHasOptionsMenu(true)
         setDisplayHomeAsUpEnabled(true)
 
-//        TODO: add the map setup implementation
-//        TODO: zoom to the user location after taking his permission
-//        TODO: add style to the map
-//        TODO: put a marker to location that the user selected
 
         binding.buttonSave.setOnClickListener {
 
 
             backgroundPermLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
         }
-//        TODO: call this function after the user confirms on the selected location
+//
 
 
         return binding.root

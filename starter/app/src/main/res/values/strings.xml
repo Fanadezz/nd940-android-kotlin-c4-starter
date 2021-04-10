@@ -50,7 +50,7 @@
     <string name="geofence_too_many_geofences">Your app has registered too many geofences.</string>
     <string name="geofence_too_many_pending_intents">You have provided too many PendingIntents to the addGeofences() call.</string>
     <string name="error_adding_geofence">Error Happened, Can\'t Add Geofence</string>
-    <!-- TODO: Remove or change this placeholder text -->
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="pick_point_of_interest_msg">Please pick a Point of Interest</string>
     <string name="unknown_geofence_error">Unknown Geofence Error</string>
@@ -60,4 +60,7 @@
     <string name="transition_enter_found">GEOFENCE_TRANSITION_ENTER found</string>
     <string name="place_name">Place:</string>
     <string name="description_label">Description:</string>
+
+
 </resources>
+<!--AIzaSyDuoy-OJzPgi2kh24lRXMETQ0VaggemVuk-->

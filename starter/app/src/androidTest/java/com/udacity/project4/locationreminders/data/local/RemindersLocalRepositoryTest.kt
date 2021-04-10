@@ -26,7 +26,7 @@ import java.util.*
 @SmallTest
 class RemindersLocalRepositoryTest: AutoCloseKoinTest() {
 
-    //    TODO: Add testing implementation to the RemindersLocalRepository.kt
+
 
     /*Executes each task synchronously using Architecture Components*/
     @get:Rule

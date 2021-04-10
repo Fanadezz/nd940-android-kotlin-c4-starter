@@ -29,7 +29,7 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
 
 
 
-//TODO: implement the onReceive method to receive the geofencing events at the background
+
 
 
 
