@@ -51,6 +51,8 @@ class RemindersDaoTest {
 
         database.close()
     }
+
+    //INSERT AND RETRIVE RMINER
     @Test
     fun saveReminder_getReminderById() = mainCoroutineRule.runBlockingTest {
 
@@ -77,6 +79,8 @@ class RemindersDaoTest {
         assertThat(loadedReminder.latitude, `is`(loadedReminder.latitude))
         assertThat(loadedReminder.longitude ,`is`(loadedReminder.longitude))
     }
+
+    //NO DATA FOUND ERROR
     @Test
     fun getReminderByInvalidId_returnNull() = mainCoroutineRule.runBlockingTest {
         // GIVEN - a randomly generated reminder Id

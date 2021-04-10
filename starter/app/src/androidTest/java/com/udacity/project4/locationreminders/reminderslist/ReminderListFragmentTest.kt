@@ -157,7 +157,7 @@ class ReminderListFragmentTest :
     //TESTING FOR THE ERROR MESSAGES.
 
     @Test
-    fun emptyReminders_displayEmptyList() = mainCoroutineRule.runBlockingTest {
+    fun emptyReminders_displayNoDataTextView() = mainCoroutineRule.runBlockingTest {
 
 
         //GIVEN - empty reminders

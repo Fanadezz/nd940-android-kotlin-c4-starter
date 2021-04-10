@@ -11,6 +11,7 @@ import com.udacity.project4.locationreminders.data.FakeDataSource
 import com.udacity.project4.locationreminders.getOrAwaitValue
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
@@ -115,7 +116,22 @@ class SaveReminderViewModelTest {
     }
 
 
+    @Test
+    fun saveReminder_showLoading() = runBlockingTest {
 
-    
+        //GIVEN - a reminder to save
+        val reminder = ReminderDataItem("Title", "Description", "Loc", 0.0, 0.0)
+        mainCoroutineRule.pauseDispatcher()
+
+
+        //WHEN - saving reminder
+        viewModel.saveReminder(reminder)
+
+        //THEN - show loading snackbar
+        assertThat(viewModel.showLoading.getOrAwaitValue(), `is`(true))
+        mainCoroutineRule.resumeDispatcher()
+        assertThat(viewModel.showLoading.getOrAwaitValue(), `is`(false))
+
+    }
 
 }
