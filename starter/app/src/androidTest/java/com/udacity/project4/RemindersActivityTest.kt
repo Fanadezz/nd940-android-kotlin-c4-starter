@@ -3,6 +3,7 @@ package com.udacity.project4
 import android.app.Application
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import androidx.test.espresso.IdlingRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.udacity.project4.locationreminders.RemindersActivity
@@ -11,7 +12,10 @@ import com.udacity.project4.locationreminders.data.local.LocalDB
 import com.udacity.project4.locationreminders.data.local.RemindersLocalRepository
 import com.udacity.project4.locationreminders.reminderslist.RemindersListViewModel
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
+import com.udacity.project4.util.DataBindingIdlingResource
+import com.udacity.project4.utils.EspressoIdlingResource
 import kotlinx.coroutines.runBlocking
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -69,6 +73,25 @@ class RemindersActivityTest :
     }
 
 
+    private val dataBindingIdlingResource = DataBindingIdlingResource()
+    @Before
+    fun registerIdlingResource() {
+
+        /*By registering these 2 resources in your test, when either of these 2
+        * resources is busy espresso will wait until they are idle before moving
+        * to the next command*/
+
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
+        IdlingRegistry.getInstance().register(dataBindingIdlingResource)
+
+    }
+
+    @After
+    fun unregisterIdlingResource() {
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource)
+        IdlingRegistry.getInstance().unregister(dataBindingIdlingResource)
+    }
+
     //    TODO: add End to End testing to the app
     @Test
     fun createReminder_saveAndDisplayReminder() {
@@ -76,6 +99,7 @@ class RemindersActivityTest :
         //1. Launch RemindersActivity
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
         //2. Click add reminder button
+        
         //3. Input Reminder details
         //4. Click save reminder button
         //5. Assert reminder is displayed
