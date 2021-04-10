@@ -1,7 +1,6 @@
 package com.udacity.project4.locationreminders.reminderslist
 
 import android.app.Application
-import android.content.Context
 import android.os.Bundle
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.fragment.app.testing.launchFragmentInContainer
@@ -24,7 +23,6 @@ import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -34,7 +32,6 @@ import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import org.koin.test.AutoCloseKoinTest
-import org.koin.test.KoinTest
 import org.koin.test.get
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
@@ -119,10 +116,9 @@ class ReminderListFragmentTest : AutoCloseKoinTest() { // Extended Koin Test - e
     //    TODO: test the displayed data on the UI.
 
     @Test
-    fun putText() = mainCoroutineRule.runBlockingTest {
-        mainCoroutineRule.pauseDispatcher()
-        //GIVEN - a reminder
+    fun insertReminder_reminderIsDisplayed()= mainCoroutineRule.runBlockingTest {
 
+        //GIVEN - a reminder
         val reminder = ReminderDTO(
                 title = "Title",
                 description = "Description",
@@ -131,16 +127,28 @@ class ReminderListFragmentTest : AutoCloseKoinTest() { // Extended Koin Test - e
                 longitude = 0.0,
         )
         //WHEN - added to the Repository
-        mainCoroutineRule.pauseDispatcher()
-        repository.saveReminder(reminder)
+
+        runBlocking {
+
+            repository.deleteAllReminders()
+            repository.saveReminder(reminder)
+        }
+
+
         //THEN - correct title and description are displayed on reminders list
 
-        mainCoroutineRule.resumeDispatcher()
         launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
 
         onView(withText("Title")).check(matches(isDisplayed()))
+        onView(withText("Description")).check(matches(isDisplayed()))
+        onView(withText("Loc")).check(matches(isDisplayed()))
 
 
+
+Thread.sleep(2000)
     }
+
+
+
     //    TODO: add testing for the error messages.
 }
