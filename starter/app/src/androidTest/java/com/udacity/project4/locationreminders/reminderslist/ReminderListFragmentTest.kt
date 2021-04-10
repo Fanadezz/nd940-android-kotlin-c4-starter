@@ -41,7 +41,8 @@ import org.mockito.Mockito.verify
 @ExperimentalCoroutinesApi
 @MediumTest
 
-class ReminderListFragmentTest : AutoCloseKoinTest() { // Extended Koin Test - embed autoclose @after method to close Koin after every test
+class ReminderListFragmentTest :
+        AutoCloseKoinTest() { // Extended Koin Test - embed autoclose @after method to close Koin after every test
 
     private lateinit var repository: ReminderDataSource
     private lateinit var appContext: Application
@@ -90,15 +91,17 @@ class ReminderListFragmentTest : AutoCloseKoinTest() { // Extended Koin Test - e
     }
 
 
-    //    TODO: test the navigation of the fragments.
 
-    //Test the navigation of the fragments.
+
+    //TEST THE NAVIGATION OF THE FRAGMENTS.
     @Test
     fun clickFabButton_navigateToSelectLocation() {
 
         //GIVEN - ReminderListFragment
-        val fragmentScenario = launchFragmentInContainer<ReminderListFragment>(Bundle(),
-                                                                               R.style.AppTheme)
+        val fragmentScenario = launchFragmentInContainer<ReminderListFragment>(
+                Bundle(),
+                R.style.AppTheme
+        )
         val navController = mock(NavController::class.java)
 
         fragmentScenario.onFragment {
@@ -113,10 +116,11 @@ class ReminderListFragmentTest : AutoCloseKoinTest() { // Extended Koin Test - e
         //THEN - navigates to SaveReminderFragment
         verify(navController).navigate(ReminderListFragmentDirections.toSaveReminder())
     }
-    //    TODO: test the displayed data on the UI.
 
+
+    //TESTING THE DISPLAYED DATA ON THE UI.
     @Test
-    fun insertReminder_reminderIsDisplayed()= mainCoroutineRule.runBlockingTest {
+    fun insertReminder_reminderDetailsDisplayed() = mainCoroutineRule.runBlockingTest {
 
         //GIVEN - a reminder
         val reminder = ReminderDTO(
@@ -129,11 +133,12 @@ class ReminderListFragmentTest : AutoCloseKoinTest() { // Extended Koin Test - e
         //WHEN - added to the Repository
 
         runBlocking {
+            repository.apply {
+                deleteAllReminders()
+                saveReminder(reminder)
+            }
 
-            repository.deleteAllReminders()
-            repository.saveReminder(reminder)
         }
-
 
         //THEN - correct title and description are displayed on reminders list
 
@@ -143,12 +148,32 @@ class ReminderListFragmentTest : AutoCloseKoinTest() { // Extended Koin Test - e
         onView(withText("Description")).check(matches(isDisplayed()))
         onView(withText("Loc")).check(matches(isDisplayed()))
 
-
-
-Thread.sleep(2000)
+        Thread.sleep(2000)
     }
 
 
 
-    //    TODO: add testing for the error messages.
+
+    //TESTING FOR THE ERROR MESSAGES.
+
+    @Test
+    fun emptyReminders_displayEmptyList() = mainCoroutineRule.runBlockingTest {
+
+
+        //GIVEN - empty reminders
+        runBlocking {
+            repository.apply {
+
+                deleteAllReminders()
+            }
+
+        }
+        //WHEN - launch fragment
+        launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
+
+
+        //THEN - noDataTextView is displayed
+        onView(withId(R.id.noDataTextView)).check(matches(isDisplayed()))
+
+    }
 }
