@@ -148,7 +148,7 @@ class ReminderListFragmentTest :
         onView(withText("Description")).check(matches(isDisplayed()))
         onView(withText("Loc")).check(matches(isDisplayed()))
 
-        Thread.sleep(2000)
+
     }
 
 

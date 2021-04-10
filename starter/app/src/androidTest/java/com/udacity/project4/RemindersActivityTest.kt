@@ -1,15 +1,20 @@
 package com.udacity.project4
 
 import android.app.Application
-import android.text.TextUtils.replace
+import android.view.View
+import android.widget.TextView
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
+import androidx.test.espresso.UiController
+import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.replaceText
-import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.udacity.project4.locationreminders.RemindersActivity
@@ -25,6 +30,8 @@ import com.udacity.project4.utils.EspressoIdlingResource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
+import org.hamcrest.CoreMatchers
+import org.hamcrest.Matcher
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -36,6 +43,8 @@ import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import org.koin.test.AutoCloseKoinTest
 import org.koin.test.get
+
+@ExperimentalCoroutinesApi
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
@@ -108,9 +117,9 @@ var instantTaskExecutorRule = InstantTaskExecutorRule()
         IdlingRegistry.getInstance().unregister(dataBindingIdlingResource)
     }
 
-    //    TODO: add End to End testing to the app
+    // END TO END TESTING TO THE APP
     @Test
-    fun createReminder_saveAndDisplayReminder() = runBlockingTest{
+    fun createReminder_saveAndDisplayReminder() = mainCoroutineRule.runBlockingTest{
 val reminder = ReminderDTO(title = "Title",
                               description = "Description",
                               location = "Loc",
@@ -124,9 +133,8 @@ val reminder = ReminderDTO(title = "Title",
         //3. Input Reminder details
         onView(withId(R.id.reminderTitle)).perform(replaceText(reminder.title))
         onView(withId(R.id.reminderDescription)).perform(replaceText(reminder.description))
-        onView(withId(R.id.selectedLocation)).perform(replaceText(reminder.location))
-        //4. Click save reminder button
-        onView(withId(R.id.saveReminder)).perform(click())
+        onView(withId(R.id.selectedLocation)).perform(setTextInTextView(reminder.location))
+
 
         runBlocking {
             repository.apply {
@@ -135,10 +143,40 @@ val reminder = ReminderDTO(title = "Title",
             }
 
         }
+        //4. Click save reminder button
+        onView(withId(R.id.saveReminder)).perform(click())
 
-        //5. Assert reminder is displayed
+        //5. Assert reminder details are displayed
+        onView(withText("Title")).check(matches(isDisplayed()))
+        onView(withText("Description")).check(matches(isDisplayed()))
+        onView(withText("Loc")).check(matches(isDisplayed()))
+
+
+
         //6. Close activity
-    }}
+        activityScenario.close()
+    }
+
+    private fun setTextInTextView(value: String?): ViewAction {
+        return object : ViewAction {
+            override fun getConstraints(): Matcher<View> {
+                return CoreMatchers.allOf(isDisplayed(), ViewMatchers.isAssignableFrom(
+                        TextView::class.java))
+            }
+
+            override fun perform(uiController: UiController, view: View) {
+                (view as TextView).text = value
+            }
+
+            override fun getDescription(): String {
+                return "replace text"
+            }
+        }
+    }
 
 
-}
+
+    }
+
+
+

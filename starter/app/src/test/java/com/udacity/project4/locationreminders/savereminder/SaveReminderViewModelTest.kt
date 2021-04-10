@@ -5,11 +5,13 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
+import com.udacity.project4.R
 import com.udacity.project4.locationreminders.MainCoroutineRule
 import com.udacity.project4.locationreminders.data.FakeDataSource
 import com.udacity.project4.locationreminders.getOrAwaitValue
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
@@ -53,15 +55,10 @@ class SaveReminderViewModelTest {
 
     }
 
-    @After
-    fun tearDown() {
-        stopKoin()
-    }
 
     @Test
     fun onClear_reminderNull() {
         //GIVEN - onClear() called
-
         viewModel.onClear()
 
         //WHEN - testing LiveData
@@ -103,5 +100,22 @@ class SaveReminderViewModelTest {
 
     }
 
+    @Test
+    fun titleNull_showSnackBar() {
+
+        //GIVEN - a reminder to validate
+        val reminder = ReminderDataItem("Title", "Description", "Loc", 0.0, 0.0)
+
+        //WHEN - Title is null
+        reminder.title = null
+
+        viewModel.validateAndSaveReminder(reminder)
+        //THEN - snackbar is shown
+        assertThat(viewModel.showSnackBarInt.getOrAwaitValue(), `is`("Please enter title"))
+    }
+
+
+
+    
 
 }
