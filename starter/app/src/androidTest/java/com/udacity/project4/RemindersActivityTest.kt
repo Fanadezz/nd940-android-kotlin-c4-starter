@@ -1,22 +1,33 @@
 package com.udacity.project4
 
 import android.app.Application
+import android.text.TextUtils.replace
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.replaceText
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.udacity.project4.locationreminders.RemindersActivity
 import com.udacity.project4.locationreminders.data.ReminderDataSource
+import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.local.LocalDB
 import com.udacity.project4.locationreminders.data.local.RemindersLocalRepository
 import com.udacity.project4.locationreminders.reminderslist.RemindersListViewModel
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.util.DataBindingIdlingResource
+import com.udacity.project4.util.monitorActivity
 import com.udacity.project4.utils.EspressoIdlingResource
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -72,7 +83,12 @@ class RemindersActivityTest :
         }
     }
 
+@get:Rule
+var instantTaskExecutorRule = InstantTaskExecutorRule()
 
+    @ExperimentalCoroutinesApi
+    @get:Rule
+    var mainCoroutineRule = MainCoroutineRule()
     private val dataBindingIdlingResource = DataBindingIdlingResource()
     @Before
     fun registerIdlingResource() {
@@ -94,17 +110,35 @@ class RemindersActivityTest :
 
     //    TODO: add End to End testing to the app
     @Test
-    fun createReminder_saveAndDisplayReminder() {
-
+    fun createReminder_saveAndDisplayReminder() = runBlockingTest{
+val reminder = ReminderDTO(title = "Title",
+                              description = "Description",
+                              location = "Loc",
+                              latitude = 0.0,
+                              longitude = 0.0)
         //1. Launch RemindersActivity
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
+        dataBindingIdlingResource.monitorActivity(activityScenario)
         //2. Click add reminder button
-        
+       onView(withId(R.id.addReminderFAB)).perform(click())
         //3. Input Reminder details
+        onView(withId(R.id.reminderTitle)).perform(replaceText(reminder.title))
+        onView(withId(R.id.reminderDescription)).perform(replaceText(reminder.description))
+        onView(withId(R.id.selectedLocation)).perform(replaceText(reminder.location))
         //4. Click save reminder button
+        onView(withId(R.id.saveReminder)).perform(click())
+
+        runBlocking {
+            repository.apply {
+
+                saveReminder(reminder)
+            }
+
+        }
+
         //5. Assert reminder is displayed
         //6. Close activity
-    }
+    }}
 
 
 }
