@@ -47,7 +47,7 @@ class AuthenticationActivity : AppCompatActivity() {
                 LoginViewModel.AuthStateEnum.AUTHENTICATED -> {
                     //redirect to RemindersActivity if signed-in using an intent
                     startActivity(Intent(this, RemindersActivity::class.java))
-finish()
+                    finish()
                 }
                 else -> {
 
@@ -62,8 +62,7 @@ finish()
         }
 
 
-
-//          TODO: a bonus is to customize the sign in flow to look nice using :
+        //          TODO: a bonus is to customize the sign in flow to look nice using :
         //https://github.com/firebase/FirebaseUI-Android/blob/master/auth/README.md#custom-layout
 
     }
@@ -83,5 +82,8 @@ finish()
 
     }
 
-
+    override fun onBackPressed() {
+        super.onBackPressed()
+        moveTaskToBack(true);
+    }
 }
