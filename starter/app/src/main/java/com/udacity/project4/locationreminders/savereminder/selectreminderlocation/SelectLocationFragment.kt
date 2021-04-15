@@ -41,7 +41,7 @@ import java.util.concurrent.TimeUnit
 
 class SelectLocationFragment : BaseFragment() {
 
-    //vars
+    //VARS
     private lateinit var map: GoogleMap
     private lateinit var lastKnownLocation: Location
     private lateinit var selectedPOI: PointOfInterest
@@ -54,6 +54,10 @@ class SelectLocationFragment : BaseFragment() {
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
+
+    //VALs
+    private val runningQOrLater = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+
     //create a location request object
     private val locationRequest = LocationRequest().apply {
 
@@ -65,7 +69,7 @@ class SelectLocationFragment : BaseFragment() {
 
     private val locationCallback = object : LocationCallback() {
 
-        @RequiresApi(Build.VERSION_CODES.Q)
+
         override fun onLocationResult(locatioResult: LocationResult?) {
             super.onLocationResult(locatioResult)
 
@@ -84,7 +88,6 @@ class SelectLocationFragment : BaseFragment() {
     private lateinit var binding: FragmentSelectLocationBinding
 
 
-    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onStart() {
         super.onStart()
         Timber.i("onStart() called")
@@ -110,20 +113,20 @@ class SelectLocationFragment : BaseFragment() {
         onPointOfInterestClick()
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
 
 
         binding = DataBindingUtil.inflate(
-            inflater, R.layout.fragment_select_location, container,
-            false
+                inflater, R.layout.fragment_select_location, container,
+                false
         )
 
         //initialize fusedLocationProviderClient
         fusedLocationProviderClient =
-            LocationServices.getFusedLocationProviderClient(requireActivity())
+                LocationServices.getFusedLocationProviderClient(requireActivity())
 
         binding.viewModel = _viewModel
         binding.lifecycleOwner = this
@@ -133,11 +136,23 @@ class SelectLocationFragment : BaseFragment() {
 
 
         binding.buttonSave.setOnClickListener {
+            /*On Android 10 (API level 29) and higher, you must declare the
+            ACCESS_BACKGROUND_LOCATION permission in your app's manifest in order
+             to request background location access at runtime. On earlier versions
+             of Android, when your app receives foreground location access, it
+             automatically receives background location access as well.
 
+            */
 
-            backgroundPermLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                backgroundPermLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+            }else {
+
+                onLocationSelected()
+            }
+
         }
-//
+        //
 
 
         return binding.root
@@ -152,29 +167,31 @@ class SelectLocationFragment : BaseFragment() {
     }
 
     //suppress permission check
-    @RequiresApi(Build.VERSION_CODES.Q)
+
+    @RequiresApi(Build.VERSION_CODES.M)
     @SuppressLint("MissingPermission")
     private val foregroundPermLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) {
 
                 isGranted ->
 
-            if (isGranted) {
-                Timber.i("Permissions Granted")
+                if (isGranted) {
+                    Timber.i("Permissions Granted")
 
-                getLastKnownLocation()
+                    getLastKnownLocation()
 
-                //add my Location Button on top-right side corner
-                map.isMyLocationEnabled = true
-            } else {
+                    //add my Location Button on top-right side corner
+                    map.isMyLocationEnabled = true
+                } else {
 
-                Timber.i("Permissions Denied")
-                showRationale(Manifest.permission.ACCESS_FINE_LOCATION)
+                    Timber.i("Permissions Denied")
+                    showRationale(Manifest.permission.ACCESS_FINE_LOCATION)
 
+                }
             }
-        }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
+
+    @RequiresApi(Build.VERSION_CODES.M)
     @SuppressLint("MissingPermission")
     fun getLastKnownLocation() {
         Timber.i("getting the last known location")
@@ -188,22 +205,22 @@ class SelectLocationFragment : BaseFragment() {
                 showLocationSettingDialog()
                 Timber.i("Location is null, entering else block")
                 fusedLocationProviderClient.requestLocationUpdates(
-                    locationRequest,
-                    locationCallback,
-                    Looper.getMainLooper()
+                        locationRequest,
+                        locationCallback,
+                        Looper.getMainLooper()
                 )
 
 
             }
         }
-            .addOnFailureListener {
+                .addOnFailureListener {
 
-                makeText(requireActivity(), "${it.message}", Toast.LENGTH_LONG)
-                    .show()
-            }
+                    makeText(requireActivity(), "${it.message}", Toast.LENGTH_LONG)
+                            .show()
+                }
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
+
     @SuppressLint("MissingPermission")
     private fun moveCameraAndAddMarker(location: Location) {
 
@@ -211,36 +228,30 @@ class SelectLocationFragment : BaseFragment() {
 
         //add marker
         val myMarker = map.addMarker(
-            MarkerOptions()
-                .position(latLng)
-                .title("My Location")
-                .icon(
-                    BitmapDescriptorFactory.defaultMarker(
-                        BitmapDescriptorFactory.HUE_GREEN
-                    )
-                )
+                MarkerOptions()
+                        .position(latLng)
+                        .title("My Location")
+                        .icon(
+                                BitmapDescriptorFactory.defaultMarker(
+                                        BitmapDescriptorFactory.HUE_GREEN
+                                )
+                        )
         )
 
         myMarker.showInfoWindow()
 
-        //move camera
-        // map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,18f))
-
-        //animate camera
-        // map.animateCamera(CameraUpdateFactory.zoomIn())
-        //map.animateCamera(CameraUpdateFactory.zoomTo(18F),2000, null)
         val cameraPosition = CameraPosition.Builder()
-            .target(latLng) // sets the center of the map to Mountain View
-            .zoom(18f)            // set zoom
-            .bearing(90f)         // set orientation of the camera
-            .tilt(0f)            // set camera tilt
-            .build()
+                .target(latLng) // sets the center of the map to Mountain View
+                .zoom(18f)            // set zoom
+                .bearing(90f)         // set orientation of the camera
+                .tilt(0f)            // set camera tilt
+                .build()
         map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 1000, null)
 
 
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
+
     private fun onPointOfInterestClick() {
         map.setOnPoiClickListener {
 
@@ -251,14 +262,14 @@ class SelectLocationFragment : BaseFragment() {
 
             //add poiMarker
             val poiMarker = map.addMarker(
-                MarkerOptions().position(it.latLng)
-                    .title(it.name)
-                    .icon
-                        (
-                        BitmapDescriptorFactory.defaultMarker(
-                            BitmapDescriptorFactory.HUE_BLUE
-                        )
-                    )
+                    MarkerOptions().position(it.latLng)
+                            .title(it.name)
+                            .icon
+                            (
+                                    BitmapDescriptorFactory.defaultMarker(
+                                            BitmapDescriptorFactory.HUE_BLUE
+                                    )
+                            )
             )
 
             poiMarker.showInfoWindow()
@@ -295,21 +306,20 @@ class SelectLocationFragment : BaseFragment() {
 
         } else {
             Snackbar.make(
-                binding.root, getString(R.string.pick_point_of_interest_msg),
-                Snackbar.LENGTH_SHORT
+                    binding.root, getString(R.string.pick_point_of_interest_msg),
+                    Snackbar.LENGTH_SHORT
             )
-                .show()
+                    .show()
         }
 
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.Q)
     private val backgroundPermLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
+            ActivityResultContracts.RequestPermission()
     ) {
 
-            isGranted ->
+        isGranted ->
         if (isGranted) {
 
             Timber.i("Background Permissions Granted!")
@@ -325,35 +335,35 @@ class SelectLocationFragment : BaseFragment() {
     private fun showRationale(permission: String) {
         if (shouldShowRequestPermissionRationale(permission)) {
             val materialAlertDialogBuilder = MaterialAlertDialogBuilder(
-                requireActivity()
+                    requireActivity()
             ).setTitle("Location Permission")
-                .setMessage(R.string.rationale_for_location_permissions)
-                .setPositiveButton(R.string.settings) { dialog, _ ->
+                    .setMessage(R.string.rationale_for_location_permissions)
+                    .setPositiveButton(R.string.settings) { dialog, _ ->
 
-                    startActivity(Intent().apply {
+                        startActivity(Intent().apply {
 
-                        action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                        data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    })
+                            action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                            data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        })
 
-                    dialog.dismiss()
+                        dialog.dismiss()
 
-                }
-                .setNegativeButton(android.R.string.cancel) { dialog, _ ->
-                    Snackbar.make(
-                        binding.root, R.string.location_required_error,
-                        Snackbar.LENGTH_INDEFINITE
-                    )
-                        .setAction(android.R.string.ok) {
+                    }
+                    .setNegativeButton(android.R.string.cancel) { dialog, _ ->
+                        Snackbar.make(
+                                binding.root, R.string.location_required_error,
+                                Snackbar.LENGTH_INDEFINITE
+                        )
+                                .setAction(android.R.string.ok) {
 
-                            showSnackBar(
-                                getString(R.string.rationale_for_location_permissions)
-                            )
-                        }
+                                    showSnackBar(
+                                            getString(R.string.rationale_for_location_permissions)
+                                    )
+                                }
 
-                }
-                .create()
+                    }
+                    .create()
             materialAlertDialogBuilder.show()
             Timber.i("showing rationale dialog")
         }
@@ -362,19 +372,19 @@ class SelectLocationFragment : BaseFragment() {
 
     private fun showSnackBar(message: String) {
         Snackbar.make(
-            binding.root, R.string.location_required_error,
-            Snackbar.LENGTH_INDEFINITE
+                binding.root, R.string.location_required_error,
+                Snackbar.LENGTH_INDEFINITE
         )
-            .setAction(R.string.settings) {
-                startActivity(Intent().apply {
+                .setAction(R.string.settings) {
+                    startActivity(Intent().apply {
 
-                    action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                    data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                })
+                        action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                        data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    })
 
-            }
-            .show()
+                }
+                .show()
 
     }
 
@@ -415,7 +425,7 @@ class SelectLocationFragment : BaseFragment() {
             //customize base map style
 
             val success = map.setMapStyle(
-                MapStyleOptions.loadRawResourceStyle(activity, R.raw.map_style)
+                    MapStyleOptions.loadRawResourceStyle(activity, R.raw.map_style)
             )
             if (!success) {
 
@@ -433,7 +443,7 @@ class SelectLocationFragment : BaseFragment() {
     private fun isLocationEnabled(): Boolean {
         val locationManager = requireActivity().getSystemService(LocationManager::class.java)
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager
-            .isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+                .isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -442,19 +452,21 @@ class SelectLocationFragment : BaseFragment() {
         if (!isLocationEnabled()) {
 
             val materialAlertDialogBuilder = MaterialAlertDialogBuilder(requireActivity())
-                .setTitle(R.string.enable_location)
-                .setMessage(R.string.enable_dialog_message)
-                .setPositiveButton(getString(R.string.settings)) { _, _ ->
-                    val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                    startActivity(intent)
-                }.setNegativeButton(getString(R.string.exit)) { _, _ ->
-                    Snackbar.make(
-                        binding.root, R.string.location_required_error, Snackbar
-                            .LENGTH_INDEFINITE
-                    )
-                        .setAction(getString(android.R.string.ok)) {}.show()
-                }
-                .create()
+                    .setTitle(R.string.enable_location)
+                    .setMessage(R.string.enable_dialog_message)
+                    .setPositiveButton(getString(R.string.settings)) { _, _ ->
+                        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                        startActivity(intent)
+                    }
+                    .setNegativeButton(getString(R.string.exit)) { _, _ ->
+                        Snackbar.make(
+                                binding.root, R.string.location_required_error, Snackbar
+                                .LENGTH_INDEFINITE
+                        )
+                                .setAction(getString(android.R.string.ok)) {}
+                                .show()
+                    }
+                    .create()
             materialAlertDialogBuilder.show()
         }
     }
