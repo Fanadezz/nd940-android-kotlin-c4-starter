@@ -49,14 +49,8 @@ class SelectLocationFragment : BaseFragment() {
     private lateinit var poiName: String
     private var poiIsInitialized = false
 
-
     //Location Components
-
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-
-
-    //VALs
-    private val runningQOrLater = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
 
     //create a location request object
     private val locationRequest = LocationRequest().apply {
@@ -69,14 +63,14 @@ class SelectLocationFragment : BaseFragment() {
 
     private val locationCallback = object : LocationCallback() {
 
-
         override fun onLocationResult(locatioResult: LocationResult?) {
             super.onLocationResult(locatioResult)
 
             if (locatioResult != null) {
                 lastKnownLocation = locatioResult.lastLocation
                 moveCameraAndAddMarker(lastKnownLocation)
-                Timber.i("lastKnown Location initialized via call back")
+
+
             }
 
         }
@@ -90,7 +84,7 @@ class SelectLocationFragment : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
-        Timber.i("onStart() called")
+
         foregroundPermLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
@@ -98,7 +92,7 @@ class SelectLocationFragment : BaseFragment() {
     override fun onStop() {
         super.onStop()
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-        Timber.i("onStop() called")
+
 
     }
 
@@ -176,7 +170,7 @@ class SelectLocationFragment : BaseFragment() {
                 isGranted ->
 
                 if (isGranted) {
-                    Timber.i("Permissions Granted")
+
 
                     getLastKnownLocation()
 
@@ -184,7 +178,7 @@ class SelectLocationFragment : BaseFragment() {
                     map.isMyLocationEnabled = true
                 } else {
 
-                    Timber.i("Permissions Denied")
+
                     showRationale(Manifest.permission.ACCESS_FINE_LOCATION)
 
                 }
@@ -194,16 +188,16 @@ class SelectLocationFragment : BaseFragment() {
     @RequiresApi(Build.VERSION_CODES.M)
     @SuppressLint("MissingPermission")
     fun getLastKnownLocation() {
-        Timber.i("getting the last known location")
+
         fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
             if (location != null) {
                 lastKnownLocation = location
                 moveCameraAndAddMarker(lastKnownLocation)
 
-                Timber.i("Location is not null, initialized inside if-block")
+
             } else {
                 showLocationSettingDialog()
-                Timber.i("Location is null, entering else block")
+
                 fusedLocationProviderClient.requestLocationUpdates(
                         locationRequest,
                         locationCallback,
@@ -322,12 +316,14 @@ class SelectLocationFragment : BaseFragment() {
         isGranted ->
         if (isGranted) {
 
-            Timber.i("Background Permissions Granted!")
+
             onLocationSelected()
         } else {
-            Timber.i("Background Perms Denied")
 
-            showRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                showRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+            }
 
         }
     }
@@ -365,7 +361,7 @@ class SelectLocationFragment : BaseFragment() {
                     }
                     .create()
             materialAlertDialogBuilder.show()
-            Timber.i("showing rationale dialog")
+
         }
     }
 
@@ -429,7 +425,7 @@ class SelectLocationFragment : BaseFragment() {
             )
             if (!success) {
 
-                Timber.i("Custom Style Parsing Failes")
+                Timber.i("Custom Style Parsing Failed")
             }
         } catch (e: Resources.NotFoundException) {
 
