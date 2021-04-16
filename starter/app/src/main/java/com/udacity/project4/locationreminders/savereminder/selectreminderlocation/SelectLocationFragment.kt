@@ -18,8 +18,6 @@ import android.widget.Toast.makeText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
-import androidx.navigation.fragment.NavHostFragment.findNavController
-import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -44,10 +42,16 @@ class SelectLocationFragment : BaseFragment() {
     //VARS
     private lateinit var map: GoogleMap
     private lateinit var lastKnownLocation: Location
+
+    //Point of interest
     private lateinit var selectedPOI: PointOfInterest
     private lateinit var poiLatLng: LatLng
     private lateinit var poiName: String
     private var poiIsInitialized = false
+
+    //selectedLocation
+    private lateinit var selectedLocation:LatLng
+    private var isSelectedLocationInitialized:Boolean = false
 
     //Location Components
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -105,6 +109,7 @@ class SelectLocationFragment : BaseFragment() {
         //add map customization
         styleBaseMap(map)
         onPointOfInterestClick()
+        onMapClick(map)
     }
 
 
@@ -247,6 +252,9 @@ class SelectLocationFragment : BaseFragment() {
 
 
     private fun onPointOfInterestClick() {
+
+
+
         map.setOnPoiClickListener {
 
             //clear markers
@@ -271,6 +279,8 @@ class SelectLocationFragment : BaseFragment() {
             //set details for point of interest
             selectedPOI = PointOfInterest(it.latLng, it.placeId, it.name)
 
+            Timber.i("Name is: ${it.name}, Id is: ${it.placeId}")
+
             //toggle the poi initialization tracker
             poiIsInitialized = true
 
@@ -282,6 +292,34 @@ class SelectLocationFragment : BaseFragment() {
         }
     }
 
+    private fun onMapClick(map:GoogleMap) {
+        map.setOnMapClickListener {  latLng ->
+
+            //clear markers
+            map.clear()
+            isSelectedLocationInitialized = false
+
+            selectedLocation = latLng
+
+            isSelectedLocationInitialized = true
+
+            //add poiMarker
+            val marker = map.addMarker(
+                    MarkerOptions().position(latLng)
+                            .title("Customed Place")
+                            .icon
+                            (
+                                    BitmapDescriptorFactory.defaultMarker(
+                                            BitmapDescriptorFactory.HUE_BLUE
+                                    )
+                            )
+            )
+
+            marker.showInfoWindow()
+
+        }
+
+    }
 
     private fun onLocationSelected() {
 
@@ -296,9 +334,23 @@ class SelectLocationFragment : BaseFragment() {
             _viewModel.reminderSelectedLocationStr.value = poiName
 
             //Navigate back to SaveReminderFragment
-            _viewModel.navigationCommand.value = NavigationCommand.Back
+            _viewModel.navigationCommand.value = NavigationCommand.Back}
 
-        } else {
+           else if(isSelectedLocationInitialized){
+                //set the poi value in the shared viewModel to null
+                _viewModel.selectedPOI.value = null
+
+                //set latitude, longitude and location string
+                _viewModel.latitude.value = selectedLocation.latitude
+                _viewModel.longitude.value = selectedLocation.longitude
+                _viewModel.reminderSelectedLocationStr.value = "Customed Place"
+
+                //Navigate back to SaveReminderFragment
+                _viewModel.navigationCommand.value = NavigationCommand.Back
+
+            }
+
+         else {
             Snackbar.make(
                     binding.root, getString(R.string.pick_point_of_interest_msg),
                     Snackbar.LENGTH_SHORT
