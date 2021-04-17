@@ -23,17 +23,7 @@ import timber.log.Timber
 class GeofenceBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
 
-        Timber.i("onReceive() called")
-
-            GeofenceTransitionsJobIntentService.enqueueWork(context,intent)
-
-
-
-
-
-
+        GeofenceTransitionsJobIntentService.enqueueWork(context, intent)
 
     }
-
-
 }

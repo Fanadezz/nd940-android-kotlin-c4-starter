@@ -50,8 +50,8 @@ class SelectLocationFragment : BaseFragment() {
     private var poiIsInitialized = false
 
     //selectedLocation
-    private lateinit var selectedLocation:LatLng
-    private var isSelectedLocationInitialized:Boolean = false
+    private lateinit var selectedLocation: LatLng
+    private var isSelectedLocationInitialized: Boolean = false
 
     //Location Components
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -145,7 +145,7 @@ class SelectLocationFragment : BaseFragment() {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 backgroundPermLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-            }else {
+            } else {
 
                 onLocationSelected()
             }
@@ -245,14 +245,13 @@ class SelectLocationFragment : BaseFragment() {
                 .bearing(90f)         // set orientation of the camera
                 .tilt(0f)            // set camera tilt
                 .build()
-        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 1000, null)
+        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 100, null)
 
 
     }
 
 
     private fun onPointOfInterestClick() {
-
 
 
         map.setOnPoiClickListener {
@@ -292,8 +291,8 @@ class SelectLocationFragment : BaseFragment() {
         }
     }
 
-    private fun onMapClick(map:GoogleMap) {
-        map.setOnMapClickListener {  latLng ->
+    private fun onMapClick(map: GoogleMap) {
+        map.setOnMapClickListener { latLng ->
 
             //clear markers
             map.clear()
@@ -306,7 +305,7 @@ class SelectLocationFragment : BaseFragment() {
             //add poiMarker
             val marker = map.addMarker(
                     MarkerOptions().position(latLng)
-                            .title("Customed Place")
+                            .title("Customized Point")
                             .icon
                             (
                                     BitmapDescriptorFactory.defaultMarker(
@@ -323,40 +322,43 @@ class SelectLocationFragment : BaseFragment() {
 
     private fun onLocationSelected() {
 
-        if (poiIsInitialized) {
+        when {
+            poiIsInitialized -> {
 
-            //set the poi value in the shared viewModel
-            _viewModel.selectedPOI.value = selectedPOI
+                //set the poi value in the shared viewModel
+                _viewModel.selectedPOI.value = selectedPOI
 
-            //set latitude, longitude and location string
-            _viewModel.latitude.value = poiLatLng.latitude
-            _viewModel.longitude.value = poiLatLng.longitude
-            _viewModel.reminderSelectedLocationStr.value = poiName
+                //set latitude, longitude and location string
+                _viewModel.latitude.value = poiLatLng.latitude
+                _viewModel.longitude.value = poiLatLng.longitude
+                _viewModel.reminderSelectedLocationStr.value = poiName
 
-            //Navigate back to SaveReminderFragment
-            _viewModel.navigationCommand.value = NavigationCommand.Back}
+                //Navigate back to SaveReminderFragment
+                _viewModel.navigationCommand.value = NavigationCommand.Back
 
-           else if(isSelectedLocationInitialized){
+            }
+            isSelectedLocationInitialized -> {
                 //set the poi value in the shared viewModel to null
                 _viewModel.selectedPOI.value = null
 
                 //set latitude, longitude and location string
                 _viewModel.latitude.value = selectedLocation.latitude
                 _viewModel.longitude.value = selectedLocation.longitude
-                _viewModel.reminderSelectedLocationStr.value = "Customed Place"
+                _viewModel.reminderSelectedLocationStr.value = "Customized Point"
 
                 //Navigate back to SaveReminderFragment
                 _viewModel.navigationCommand.value = NavigationCommand.Back
 
             }
-
-         else {
-            Snackbar.make(
-                    binding.root, getString(R.string.pick_point_of_interest_msg),
-                    Snackbar.LENGTH_SHORT
-            )
-                    .show()
+            else -> {
+                Snackbar.make(binding.root,
+                              getString(R.string.pick_point_of_interest_msg),
+                              Snackbar.LENGTH_SHORT)
+                        .show()
+            }
         }
+
+
 
     }
 
@@ -373,7 +375,7 @@ class SelectLocationFragment : BaseFragment() {
         } else {
 
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 showRationale(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
             }
 

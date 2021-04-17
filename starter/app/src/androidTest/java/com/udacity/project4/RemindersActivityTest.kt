@@ -10,8 +10,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.replaceText
+import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -125,18 +124,31 @@ val reminder = ReminderDTO(title = "Title",
                               location = "Loc",
                               latitude = 0.0,
                               longitude = 0.0)
+
         //1. Launch RemindersActivity
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activityScenario)
         //2. Click add reminder button
        onView(withId(R.id.addReminderFAB)).perform(click())
-        //3. Input Reminder details
-        onView(withId(R.id.reminderTitle)).perform(replaceText(reminder.title))
-        onView(withId(R.id.reminderDescription)).perform(replaceText(reminder.description))
-        onView(withId(R.id.selectedLocation)).perform(setTextInTextView(reminder.location))
+
+        //3. Click on selectLocation
+        onView(withId(R.id.reminderTitle)).perform(replaceText("Title"))
+        onView(withId(R.id.reminderDescription)).perform(replaceText("Description"))
+        onView(withId(R.id.selectLocation)).perform(click())
+
+        //4. Click on the map and save location
+        onView(withId(R.id.map)).check(matches(isDisplayed()))
+        onView(withId(R.id.map)).perform(longClick())
 
 
-        runBlocking {
+        onView(withId(R.id.buttonSave)).check(matches(isDisplayed()))
+        onView(withId(R.id.buttonSave)).perform(click())
+        //5. Input Reminder details and save
+        onView(withId(R.id.reminderTitle)).check(matches(isDisplayed()))
+        onView(withId(R.id.saveReminder)).perform(click())
+
+
+        /*runBlocking {
             repository.apply {
 
                 saveReminder(reminder)
@@ -144,12 +156,12 @@ val reminder = ReminderDTO(title = "Title",
 
         }
         //4. Click save reminder button
-        onView(withId(R.id.saveReminder)).perform(click())
+        onView(withId(R.id.saveReminder)).perform(click())*/
 
         //5. Assert reminder details are displayed
         onView(withText("Title")).check(matches(isDisplayed()))
         onView(withText("Description")).check(matches(isDisplayed()))
-        onView(withText("Loc")).check(matches(isDisplayed()))
+        onView(withText("Customized Point")).check(matches(isDisplayed()))
 
 
 

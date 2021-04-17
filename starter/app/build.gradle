@@ -161,6 +161,9 @@ dependencies {
     //Material Components for Android
     implementation "com.google.android.material:material:$materialVersion"
 
+    //UI Automator library
+    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
+
     //UNWANTED LIBS
     //kapt "androidx.lifecycle:lifecycle-compiler:$archLifecycleVersion"
 
