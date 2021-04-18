@@ -7,6 +7,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
@@ -16,6 +17,8 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
+import androidx.test.uiautomator.UiDevice
 import com.udacity.project4.locationreminders.RemindersActivity
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
@@ -53,7 +56,7 @@ class RemindersActivityTest :
 
     private lateinit var repository: ReminderDataSource
     private lateinit var appContext: Application
-
+    val uiDevice = UiDevice.getInstance(getInstrumentation())
     /**
      * As we use Koin as a Service Locator Library to develop our code, we'll also use Koin to test our code.
      * at this step we will initialize Koin related code to be able to use it in out testing.
@@ -131,16 +134,28 @@ val reminder = ReminderDTO(title = "Title",
         //2. Click add reminder button
        onView(withId(R.id.addReminderFAB)).perform(click())
 
-        //3. Click on selectLocation
+        //3. Input details and navigate to location selection
         onView(withId(R.id.reminderTitle)).perform(replaceText("Title"))
         onView(withId(R.id.reminderDescription)).perform(replaceText("Description"))
         onView(withId(R.id.selectLocation)).perform(click())
 
-        //4. Click on the map and save location
+        /*//4. Test menu items
+        openActionBarOverflowOrOptionsMenu(getApplicationContext())
+        onView(withText("Hybrid Map")).perform(click())
+        openActionBarOverflowOrOptionsMenu(getApplicationContext())
+        onView(withText("Satellite Map")).perform(click())
+        openActionBarOverflowOrOptionsMenu(getApplicationContext())
+        onView(withText("Terrain Map")).perform(click())
+        openActionBarOverflowOrOptionsMenu(getApplicationContext())
+        onView(withText("Normal Map")).perform(click())*/
+
+        //5. Long Click on the map and save location
         onView(withId(R.id.map)).check(matches(isDisplayed()))
         onView(withId(R.id.map)).perform(longClick())
 
+       //uiDevice.click(52.50648406893113.toInt(), 13.443535038592412.toInt())
 
+        //onView(withId(R.id.map)).perform(longClick())
         onView(withId(R.id.buttonSave)).check(matches(isDisplayed()))
         onView(withId(R.id.buttonSave)).perform(click())
         //5. Input Reminder details and save

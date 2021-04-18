@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat.IMPORTANCE_HIGH
 import androidx.core.app.TaskStackBuilder
 import com.udacity.project4.BuildConfig
 import com.udacity.project4.R
@@ -26,7 +27,7 @@ fun sendNotification(context: Context, reminderDataItem: ReminderDataItem) {
         val channel = NotificationChannel(
             NOTIFICATION_CHANNEL_ID,
             name,
-            NotificationManager.IMPORTANCE_DEFAULT
+            NotificationManager.IMPORTANCE_HIGH
         )
         notificationManager.createNotificationChannel(channel)
     }
@@ -46,6 +47,7 @@ fun sendNotification(context: Context, reminderDataItem: ReminderDataItem) {
         .setContentTitle(reminderDataItem.title)
         .setContentText(reminderDataItem.location)
         .setContentIntent(notificationPendingIntent)
+            .setPriority(IMPORTANCE_HIGH)
         .setAutoCancel(true)
         .build()
 

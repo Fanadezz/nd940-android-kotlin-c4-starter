@@ -42,7 +42,7 @@ class GeofenceTransitionsJobIntentService : JobIntentService(), CoroutineScope {
 
         val geofencingEvent = GeofencingEvent.fromIntent(intent)
 
-        if(intent.action == SaveReminderFragment.ACTION_GEOFENCE_EVENT){
+        if (intent.action == SaveReminderFragment.ACTION_GEOFENCE_EVENT) {
 
             //check for errors on the GeofencingEvent
             if (geofencingEvent.hasError()) {
@@ -60,10 +60,6 @@ class GeofenceTransitionsJobIntentService : JobIntentService(), CoroutineScope {
         }
 
 
-
-
-
-
     }
 
 
@@ -75,10 +71,10 @@ class GeofenceTransitionsJobIntentService : JobIntentService(), CoroutineScope {
             }
             else -> return
         }
-Timber.i("Request Id is $requestId")
+        Timber.i("Request Id is $requestId")
         //Get the local repository instance
         val remindersLocalRepository: ReminderDataSource by inject()
-//        Interaction to the repository has to be through a coroutine scope
+        //        Interaction to the repository has to be through a coroutine scope
         CoroutineScope(coroutineContext).launch(SupervisorJob()) {
 
             Timber.i("Entering Coroutine Scope")

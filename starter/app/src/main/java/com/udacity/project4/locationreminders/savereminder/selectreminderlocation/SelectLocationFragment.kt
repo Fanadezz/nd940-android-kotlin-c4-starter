@@ -107,9 +107,17 @@ class SelectLocationFragment : BaseFragment() {
         map = it
 
         //add map customization
-        styleBaseMap(map)
+        onMapLongClick(map)
         onPointOfInterestClick()
-        onMapClick(map)
+        styleBaseMap(map)
+        map.setOnMapClickListener{
+
+            map.clear()
+
+            poiIsInitialized = false
+            isSelectedLocationInitialized = false
+        }
+
     }
 
 
@@ -181,6 +189,8 @@ class SelectLocationFragment : BaseFragment() {
 
                     //add my Location Button on top-right side corner
                     map.isMyLocationEnabled = true
+                    map.uiSettings.isZoomControlsEnabled = true
+
                 } else {
 
 
@@ -245,7 +255,7 @@ class SelectLocationFragment : BaseFragment() {
                 .bearing(90f)         // set orientation of the camera
                 .tilt(0f)            // set camera tilt
                 .build()
-        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 100, null)
+       map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 1000, null)
 
 
     }
@@ -291,8 +301,8 @@ class SelectLocationFragment : BaseFragment() {
         }
     }
 
-    private fun onMapClick(map: GoogleMap) {
-        map.setOnMapClickListener { latLng ->
+    private fun onMapLongClick(map: GoogleMap) {
+        map.setOnMapLongClickListener { latLng ->
 
             //clear markers
             map.clear()
