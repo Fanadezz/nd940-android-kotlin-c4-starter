@@ -56,7 +56,9 @@ class RemindersListViewModelTest {
 
     }
 
-
+    @After fun tearDown() {
+        stopKoin()
+    }
 
     @Test
     fun addReminder_reminderListNotEmpty() = mainCoroutineRule.runBlockingTest {

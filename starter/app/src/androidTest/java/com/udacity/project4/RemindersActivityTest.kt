@@ -46,7 +46,6 @@ import org.koin.dsl.module
 import org.koin.test.AutoCloseKoinTest
 import org.koin.test.get
 
-@ExperimentalCoroutinesApi
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
@@ -56,7 +55,7 @@ class RemindersActivityTest :
 
     private lateinit var repository: ReminderDataSource
     private lateinit var appContext: Application
-    val uiDevice = UiDevice.getInstance(getInstrumentation())
+
     /**
      * As we use Koin as a Service Locator Library to develop our code, we'll also use Koin to test our code.
      * at this step we will initialize Koin related code to be able to use it in out testing.
@@ -119,14 +118,14 @@ var instantTaskExecutorRule = InstantTaskExecutorRule()
         IdlingRegistry.getInstance().unregister(dataBindingIdlingResource)
     }
 
+    @After
+    fun stop() {
+        stopKoin()
+    }
+
     // END TO END TESTING TO THE APP
     @Test
-    fun createReminder_saveAndDisplayReminder() = mainCoroutineRule.runBlockingTest{
-val reminder = ReminderDTO(title = "Title",
-                              description = "Description",
-                              location = "Loc",
-                              latitude = 0.0,
-                              longitude = 0.0)
+    fun createReminder_saveAndDisplayReminder() {
 
         //1. Launch RemindersActivity
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
@@ -155,42 +154,18 @@ val reminder = ReminderDTO(title = "Title",
         onView(withId(R.id.buttonSave)).check(matches(isDisplayed()))
         onView(withId(R.id.buttonSave)).perform(click())
 
-
         //6. saveReminder details
         onView(withId(R.id.reminderTitle)).check(matches(isDisplayed()))
         onView(withId(R.id.saveReminder)).perform(click())
-
-
 
         //7. Assert reminder details are displayed
         onView(withText("Title")).check(matches(isDisplayed()))
         onView(withText("Description")).check(matches(isDisplayed()))
         onView(withText("Customized Point")).check(matches(isDisplayed()))
 
-
-
         //8. Close activity
         activityScenario.close()
     }
-
-    private fun setTextInTextView(value: String?): ViewAction {
-        return object : ViewAction {
-            override fun getConstraints(): Matcher<View> {
-                return CoreMatchers.allOf(isDisplayed(), ViewMatchers.isAssignableFrom(
-                        TextView::class.java))
-            }
-
-            override fun perform(uiController: UiController, view: View) {
-                (view as TextView).text = value
-            }
-
-            override fun getDescription(): String {
-                return "replace text"
-            }
-        }
-    }
-
-
 
     }
 
