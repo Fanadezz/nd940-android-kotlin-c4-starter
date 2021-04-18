@@ -96,9 +96,8 @@ class RemindersActivityTest :
 @get:Rule
 var instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    @ExperimentalCoroutinesApi
-    @get:Rule
-    var mainCoroutineRule = MainCoroutineRule()
+
+
     private val dataBindingIdlingResource = DataBindingIdlingResource()
     @Before
     fun registerIdlingResource() {
@@ -159,7 +158,7 @@ var instantTaskExecutorRule = InstantTaskExecutorRule()
         onView(withId(R.id.saveReminder)).perform(click())
 
         //7. Assert reminder details are displayed
-        onView(withText("Title")).check(matches(isDisplayed()))
+       onView(withText("Title")).check(matches(isDisplayed()))
         onView(withText("Description")).check(matches(isDisplayed()))
         onView(withText("Customized Point")).check(matches(isDisplayed()))
 
