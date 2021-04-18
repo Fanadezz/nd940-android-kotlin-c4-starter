@@ -56,6 +56,9 @@ class SaveReminderViewModelTest {
 
     }
 
+    @After fun tearDown() {
+        stopKoin()
+    }
 
     @Test
     fun onClear_reminderNull() {
@@ -112,7 +115,7 @@ class SaveReminderViewModelTest {
 
         viewModel.validateAndSaveReminder(reminder)
         //THEN - snackbar is shown
-        assertThat(viewModel.showSnackBarInt.getOrAwaitValue(), `is`("Please enter title"))
+        assertThat(viewModel.showSnackBarInt.getOrAwaitValue(), `is`(R.string.err_enter_title))
     }
 
 
@@ -121,14 +124,15 @@ class SaveReminderViewModelTest {
 
         //GIVEN - a reminder to save
         val reminder = ReminderDataItem("Title", "Description", "Loc", 0.0, 0.0)
-        mainCoroutineRule.pauseDispatcher()
 
+        mainCoroutineRule.pauseDispatcher()
 
         //WHEN - saving reminder
         viewModel.saveReminder(reminder)
 
         //THEN - show loading snackbar
         assertThat(viewModel.showLoading.getOrAwaitValue(), `is`(true))
+
         mainCoroutineRule.resumeDispatcher()
         assertThat(viewModel.showLoading.getOrAwaitValue(), `is`(false))
 

@@ -139,7 +139,7 @@ val reminder = ReminderDTO(title = "Title",
         onView(withId(R.id.reminderDescription)).perform(replaceText("Description"))
         onView(withId(R.id.selectLocation)).perform(click())
 
-        /*//4. Test menu items
+        //4. Test menu items
         openActionBarOverflowOrOptionsMenu(getApplicationContext())
         onView(withText("Hybrid Map")).perform(click())
         openActionBarOverflowOrOptionsMenu(getApplicationContext())
@@ -147,40 +147,29 @@ val reminder = ReminderDTO(title = "Title",
         openActionBarOverflowOrOptionsMenu(getApplicationContext())
         onView(withText("Terrain Map")).perform(click())
         openActionBarOverflowOrOptionsMenu(getApplicationContext())
-        onView(withText("Normal Map")).perform(click())*/
+        onView(withText("Normal Map")).perform(click())
 
         //5. Long Click on the map and save location
         onView(withId(R.id.map)).check(matches(isDisplayed()))
         onView(withId(R.id.map)).perform(longClick())
-
-       //uiDevice.click(52.50648406893113.toInt(), 13.443535038592412.toInt())
-
-        //onView(withId(R.id.map)).perform(longClick())
         onView(withId(R.id.buttonSave)).check(matches(isDisplayed()))
         onView(withId(R.id.buttonSave)).perform(click())
-        //5. Input Reminder details and save
+
+
+        //6. saveReminder details
         onView(withId(R.id.reminderTitle)).check(matches(isDisplayed()))
         onView(withId(R.id.saveReminder)).perform(click())
 
 
-        /*runBlocking {
-            repository.apply {
 
-                saveReminder(reminder)
-            }
-
-        }
-        //4. Click save reminder button
-        onView(withId(R.id.saveReminder)).perform(click())*/
-
-        //5. Assert reminder details are displayed
+        //7. Assert reminder details are displayed
         onView(withText("Title")).check(matches(isDisplayed()))
         onView(withText("Description")).check(matches(isDisplayed()))
         onView(withText("Customized Point")).check(matches(isDisplayed()))
 
 
 
-        //6. Close activity
+        //8. Close activity
         activityScenario.close()
     }
 
